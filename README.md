@@ -555,8 +555,8 @@ Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y d
 </div>
 <p id="notice"><%= notice %></p>
 
-<div id="posts">
-  <div class="myposts">
+<div id="posts-container">
+  <div class="posts">
     <%= render @posts %>
   </div>
 </div>
@@ -588,18 +588,17 @@ Lo siguiente será modificar el archivo 'posts.js.coffee' que se encuentra dentr
 
 ```coffee
 # app/assets/javascripts/posts.js.coffee
-
 $(document).ready ->
-  $("#posts .myposts").infinitescroll
+  $("#posts-container .posts").infinitescroll
     navSelector: "nav.pagination"
     nextSelector: "nav.pagination a[rel=next]"
-    itemSelector: "#posts div.post"
+    itemSelector: "#posts-container div.post"
 ```
 
 Para finalizar la configuración del infinite scroll creamos una vista javascript en 'app/views/posts/' con el nombre 'index.js.erb':
 
 ```js
-$("#posts").append("<div class='page'><%= escape_javascript(render(@posts)) %></div>");
+$("#posts-container").append("<div class='myposts'><%= escape_javascript(render(@posts)) %></div>");
 ```
 
 En estos momentos si creamos más de 5 posts en nuestro blog deberíamos notar como al llegar al final de nuestra web van cargando de forma automática los siguientes 5 y así sucesivamente.

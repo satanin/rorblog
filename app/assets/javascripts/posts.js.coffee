@@ -5,7 +5,7 @@
 # app/assets/javascripts/posts.js.coffee
 
 $(document).ready ->
-  $("#posts .myposts").infinitescroll
+  $("#posts-container .posts").infinitescroll
     navSelector: "nav.pagination"
     nextSelector: "nav.pagination a[rel=next]"
-    itemSelector: "#posts div.post"
+    itemSelector: "#posts-container div.post"
