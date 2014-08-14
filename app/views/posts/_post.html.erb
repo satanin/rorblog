@@ -1,0 +1,12 @@
+<div class="post">
+  <div class="post-title">
+    <%= link_to post.title, post_path(post) %>
+  </div>
+  <small class="post-timestamp"><em><%= post.timestamp %></em></small>
+  <div class="post-body">
+    <div class="post-image">
+      <%= image_tag(post.image_url) %>
+    </div>
+    <p><%= truncate(strip_tags(post.body), length: 600) %></p>
+  </div>
+</div>

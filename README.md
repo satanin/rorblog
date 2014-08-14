@@ -229,12 +229,12 @@ Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [
 
 Aqui vemos que cada post tendrá un título que a su vez será un enlace para ver el post, debajo del post tenemos la fecha (post.timestamp) y después el cuerpo del post. El método en el que estamos llamando a la fecha de creación del post, con 'post.timestamp' no existe, así que nos vamos a nuestro modelo a crearlo.
 
-Abrimos 'app/models/post.rb' y añadimos lo siguiente.
+Abrimos 'app/models/post.rb' y añadimos el método timestamp.
 
 ```ruby
 class Post < ActiveRecord::Base
   def timestamp
-    created_at.strftime('%d %B %Y %H:%M:%S')
+    created_at.strftime('%d %B %Y %H:%M')
   end
 end
 ```
