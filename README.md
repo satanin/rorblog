@@ -165,7 +165,11 @@ class PostsController < ApplicationController
 end
 ```
 
-Si volvemos a cargar nuestra app en el navegador (http://127.0.0.1:3000) veremos otro error ya que no existe la vista para mostrar index. Para solucionar esto vamos a 'app/views/posts/' y crearemos el archivo 'index.html.erb' y de momento agregamos lo siguiente:
+Si volvemos a cargar nuestra app en el navegador (http://127.0.0.1:3000) veremos otro error ya que no existe la vista para mostrar index.
+
+![Template not found](http://i.imgur.com/xj4fJvC.png])
+
+Para solucionar esto vamos a 'app/views/posts/' y crearemos el archivo 'index.html.erb' y de momento agregamos lo siguiente:
 
     Hola Mundo
 
