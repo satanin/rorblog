@@ -470,10 +470,6 @@ Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra p
 <div id="my-posts">
   <%= render @posts %>
 </div>
-
-<div id="infinite-scrolling">
-  <%= paginate @posts %>
-</div>
 ```
 
 Si hemos seguido todos los pasos correctamente ya podríamos crear nuestro primer post en nuestra app.
@@ -548,7 +544,6 @@ Por último vamos a añadir el botón 'Borrar' en nuestra vista 'show.html.erb' 
 Si abrimos ahora nuestra aplicación en el navegador ya debería ser completamente funcional.
 
 
-
 #### Configurando la paginación y el infinite scroll
 
 Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y dejarlo de la siguiente forma:
@@ -556,6 +551,7 @@ Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y d
 ```html
 <div class="page-header">
   <h1>My posts</h1>
+    Created using Ruby on Rails
 </div>
 <p id="notice"><%= notice %></p>
 
@@ -577,6 +573,7 @@ Abrimos nuestro modelo y modificamos el código para que quede de la siguiente f
 
 ```ruby
 class Post < ActiveRecord::Base
+  mount_uploader :image, PostImageUploader
   paginates_per 5
 
   def timestamp
@@ -585,7 +582,7 @@ class Post < ActiveRecord::Base
 end
 ```
 
-Si modificamos 'paginates_per 5' y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para el número de posts que veremos antes de cargar nuevos posts.
+Si modificamos 'paginates_per 5' y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para definir el número de posts que veremos antes de cargar nuevos posts.
 
 Lo siguiente será modificar el archivo 'posts.js.coffee' que se encuentra dentro de 'app/assets/javascripts/' con el siguiente código:
 
@@ -605,7 +602,7 @@ Para finalizar la configuración del infinite scroll creamos una vista javascrip
 $("#posts").append("<div class='page'><%= escape_javascript(render(@posts)) %></div>");
 ```
 
-
+En estos momentos si creamos más de 5 posts en nuestro blog deberíamos notar como al llegar al final de nuestra web van cargando de forma automática los siguientes 5 y así sucesivamente.
 
 
 ### Añadiendo Comentarios
