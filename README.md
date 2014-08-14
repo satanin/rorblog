@@ -197,7 +197,8 @@ Editamos nuestro archivo 'app/views/posts/index.html.erb' para que en vez de mos
 
 ```html
 <div class="page-header">
-  <h1>My posts</h1>
+  <h1>My Blog</h1>
+  Created using Ruby on Rails
 </div>
 <p id="notice"><%= notice %></p>
 
@@ -241,62 +242,19 @@ end
 
 El método 'timestamp' llama a 'created_at' que es una columna de nuestro modelo (añadida de forma automática por el generador del modelo) y la formatea con ['strftime'](http://www.ruby-doc.org/core-2.1.2/Time.html#method-i-strftime) para que sea más legible podéis personalizar esto a vuestro gusto.
 
-#### Configurando la paginación y el infinite scroll
-
-Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y dejarlo de la siguiente forma:
-
-```html
-<div class="page-header">
-  <h1>My posts</h1>
-</div>
-<p id="notice"><%= notice %></p>
-
-<div id="posts">
-  <div class="myposts">
-    <%= render @posts %>
-  </div>
-</div>
-
-<div id="infinite-scrolling">
-  <%= paginate @posts %>
-</div>
-
-```
-
-Si os fijáis casi al final del archivo tenemos '<%= paginate @posts %>' que se encargará de hacer una llamada Javascript para cargar más posts de forma dinámica.
-
-Abrimos nuestro modelo y modificamos el código para que quede de la siguiente forma:
+Vamos a modificar también nuestro controlador para que la variable que estamos usando '@posts' sea accesible desde la vista.
 
 ```ruby
-class Post < ActiveRecord::Base
-  paginates_per 5
-
-  def timestamp
-    created_at.strftime('%d %B %Y %H:%M:%S')
+class PostsController < ApplicationController
+  def index
+    @posts = Post.all
   end
 end
 ```
 
-Si modificamos 'paginates_per 5' y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para el número de posts que veremos antes de cargar nuevos posts.
+Si abrimos nuestro navegador podremos ver que ahora en nuestra página principal muestra un título, pero que todavía no hemos agregado ningún post.
 
-Lo siguiente será modificar el archivo 'posts.js.coffee' que se encuentra dentro de 'app/assets/javascripts/' con el siguiente código:
-
-```coffee
-# app/assets/javascripts/posts.js.coffee
-
-$(document).ready ->
-  $("#posts .myposts").infinitescroll
-    navSelector: "nav.pagination"
-    nextSelector: "nav.pagination a[rel=next]"
-    itemSelector: "#posts div.post"
-```
-
-Para finalizar la configuración del infinite scroll creamos una vista javascript en 'app/views/posts/' con el nombre 'index.js.erb':
-
-```js
-$("#posts").append("<div class='page'><%= escape_javascript(render(@posts)) %></div>");
-```
-
+Recordad que muchos de los cambios necesitan que reiniciemos nuestro servidor web.
 
 #### Configurando carrierwave y fog para Amazon S3
 
@@ -338,7 +296,7 @@ CarrierWave.configure do |config|
   config.fog_credentials = {
     :provider               => 'AWS',                        # required
     :aws_access_key_id      => ENV["AMAZON_ACCESS_KEY"],     # required
-    :aws_secret_access_key  => ENV["AMAZON_SECRETE_KEY"],    # required
+    :aws_secret_access_key  => ENV["AMAZON_SECRET_KEY"],    # required
     :region                 => 'eu-west-1',                  # optional, defaults to 'us-east-1'
   }
   config.fog_directory  = ENV["AMAZON_BUCKET_NAME"]          # required
@@ -347,24 +305,41 @@ CarrierWave.configure do |config|
 end
 ```
 
-Como véis en vez de poner las claves que nos proporciona Amazon directamente utilizamos unas variables de entorno. 
+Como véis en vez de poner las llaves que nos proporciona Amazon directamente utilizamos unas variables de entorno que definiremos en nuestro archivo '.env'
+
+```ruby
+PORT=3000
+AMAZON_ACCESS_KEY="your_amazon_access_key"
+AMAZON_SECRET_KEY="your_amazon_secret_key"
+AMAZON_BUCKET_NAME="your_amazon_bucket_name"
+```
+
+Para obtener estas llaves debemos ir a la web de [amazon aws services](http://aws.amazon.com/), loguearnos o registrarnos en caso de que no lo hayamos hecho anteriormente y seguir estos pasos:
+- Crear un Bucket de amazon S3.
+- Crear un usuario(copiar credenciales en nuestro archivo '.env')
+- Dar permisos al usuario para acceder al nuevo bucket.
+
 Ahora vamos a modificar nuestro archivo 'app/model/post.rb' y añadimos la siguiente línea justo debajo de la definición de clase para 'montar' nuestro uploader.
 
 ```ruby
 class Post < ActiveRecord::Base
   mount_uploader :image, PostImageUploader
-  paginates_per 5
 
   def timestamp
-    created_at.strftime('%d %B %Y %H:%M:%S')
+    created_at.strftime('%d %B %Y %H:%M')
   end
 end
 
 ```
 
+###### Ojo!, ':image' es el correspondiente a la columna 'image' de nuestro modelo. Si le llamáis de otra forma no os funcionará.
+
 #### Crear los métodos new, create y show
 
-Vamos a modificar nuestro archivo 'posts_controller.rb' para añadir los métodos "new,create y show" que necesitaremos para poder agregar mensajes a nuestra app. También crearemos el método privado 'post_params', que nos asegurará de que los parámetros que vamos a incluir en nuestra tabla sean los adecuados y el método 'set_post' que le dirá a la vista que post es el que tiene que editar, mostrar, actualizar o borrar.
+ * Modificamos el archivo 'posts_controller.rb' para añadir los métodos "new,create y show" que necesitaremos para poder agregar mensajes a nuestra app.
+ * Creamos los métodos privados 'post_params', que nos asegurará que los parámetros que vamos a incluir en nuestra tabla sean los adecuados y 'set_post' que le dirá a la vista que post es el que tiene que editar, mostrar, actualizar o borrar.
+ * Añadimos un 'before_action' para que actúe antes de los métodos ':show, :edit, :update y :destroy'
+ * Modificamos el método index para que en vez de mostrar todos los artículos, los muestre en orden inverso a la fecha de creación.
 
 ```ruby
 class PostsController < ApplicationController
@@ -475,9 +450,8 @@ Vamos a crear también una nueva vista 'show.html.erb' que nos mostrará el post
     </p>
   </div>
 <div class="show-btns">
-<%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
-<%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
-<%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Estás seguro?' }, :class=>"btn btn-danger" ,:type=>'button'%>
+  <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
+  <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
 </div>
 ```
 
@@ -486,6 +460,7 @@ Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra p
 ```html
 <div class="page-header">
   <h1>My posts</h1>
+  Created using Ruby on Rails
   <div class="header-btn">
     <%= link_to 'New Post',new_post_path, :class=>"btn btn-default" ,:type=>'button' %>
   </div>
@@ -501,15 +476,20 @@ Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra p
 </div>
 ```
 
+Si hemos seguido todos los pasos correctamente ya podríamos crear nuestro primer post en nuestra app.
+
+
 El paso siguiente va a ser hacer que el botón 'Editar' que acabamos de colocar en 'app/views/show.html.erb' sea funcional, de momento no tenemos ni el método en nuestro controlador, vamos a crearlo.
 Abrimos 'app/controllers/posts_controller.rb' y agregaremos el método editar.
 
 ```ruby
 class PostsController < ApplicationController
-...
+  ...
   def edit
   end
-...
+  ...
+  private
+  ...
 end
 ```
 
@@ -524,12 +504,13 @@ Una vez creado vamos a crearnos una vista que nos permita editar los valores del
 <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
 ```
 
-Si intentamos actualizar nuestro post veremos que nos da un error puesto que no tenemos creado el método 'update' en nuestro controlador, así que vamos a añadirlo. De paso vamos a añadir también el método 'destroy'
-que nos permitirá borrar un post.
+Si intentamos actualizar nuestro post veremos que nos da un error puesto que no tenemos creado el método 'update' en nuestro controlador, así que vamos a añadirlo. De paso vamos a añadir también el método 'destroy' que nos permitirá borrar un post.
+
+###### Ojo, tanto estos métodos como el método edit deben estar por encima de la linea 'private' de nuestra clase.
 
 ```ruby
 class PostsController < ApplicationController
-...
+  ...
   def update
     respond_to do |format|
       if @post.update(post_params)
@@ -549,18 +530,82 @@ class PostsController < ApplicationController
       format.json { head :no_content }
     end
   end
-...
+  ...
+  private
+  ...
 end
 ```
 
-Por último vamos a añadir el botón 'Borrar' en nuestra vista 'show.html.erb' que nos permitirá borrar ese post.
+Por último vamos a añadir el botón 'Borrar' en nuestra vista 'show.html.erb' que nos permitirá borrar ese post, en principio lo situamos al lado de nuestro botón editar.
 
 ```html
 ...
-<%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Estás seguro?' }, :class=>"btn btn-default" ,:type=>'button'%>
+<%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button'%>
 
 ...
 ```
+
+Si abrimos ahora nuestra aplicación en el navegador ya debería ser completamente funcional.
+
+
+
+#### Configurando la paginación y el infinite scroll
+
+Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y dejarlo de la siguiente forma:
+
+```html
+<div class="page-header">
+  <h1>My posts</h1>
+</div>
+<p id="notice"><%= notice %></p>
+
+<div id="posts">
+  <div class="myposts">
+    <%= render @posts %>
+  </div>
+</div>
+
+<div id="infinite-scrolling">
+  <%= paginate @posts %>
+</div>
+
+```
+
+Si os fijáis casi al final del archivo tenemos '<%= paginate @posts %>' que se encargará de hacer una llamada Javascript para cargar más posts de forma dinámica.
+
+Abrimos nuestro modelo y modificamos el código para que quede de la siguiente forma:
+
+```ruby
+class Post < ActiveRecord::Base
+  paginates_per 5
+
+  def timestamp
+    created_at.strftime('%d %B %Y %H:%M:%S')
+  end
+end
+```
+
+Si modificamos 'paginates_per 5' y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para el número de posts que veremos antes de cargar nuevos posts.
+
+Lo siguiente será modificar el archivo 'posts.js.coffee' que se encuentra dentro de 'app/assets/javascripts/' con el siguiente código:
+
+```coffee
+# app/assets/javascripts/posts.js.coffee
+
+$(document).ready ->
+  $("#posts .myposts").infinitescroll
+    navSelector: "nav.pagination"
+    nextSelector: "nav.pagination a[rel=next]"
+    itemSelector: "#posts div.post"
+```
+
+Para finalizar la configuración del infinite scroll creamos una vista javascript en 'app/views/posts/' con el nombre 'index.js.erb':
+
+```js
+$("#posts").append("<div class='page'><%= escape_javascript(render(@posts)) %></div>");
+```
+
+
 
 
 ### Añadiendo Comentarios

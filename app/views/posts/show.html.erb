@@ -16,7 +16,7 @@
     </p>
   </div>
 <div class="show-btns">
-<%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
-<%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
-<%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Estás seguro?' }, :class=>"btn btn-danger" ,:type=>'button'%>
+  <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
+  <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
+  <%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button'%>
 </div>
