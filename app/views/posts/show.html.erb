@@ -1,0 +1,22 @@
+<div class="show-post">
+<p id="notice"><%= notice %></p>
+
+
+<div class="post">
+  <p class="post-title">
+    <%= @post.title %>
+  </p>
+  <div class="my-post">
+    <p class="post-image">
+      <%= image_tag(@post.image_url) %>
+    </p>
+
+    <p class="post-body">
+      <%= @post.body %>
+    </p>
+  </div>
+<div class="show-btns">
+<%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
+<%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
+<%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Estás seguro?' }, :class=>"btn btn-danger" ,:type=>'button'%>
+</div>
