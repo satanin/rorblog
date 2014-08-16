@@ -49,6 +49,9 @@ GEM
     erubis (2.7.0)
     excon (0.38.0)
     execjs (2.2.1)
+    figaro (0.7.0)
+      bundler (~> 1.0)
+      rails (>= 3, < 5)
     fog (1.23.0)
       fog-brightbox
       fog-core (~> 1.23)
@@ -165,6 +168,7 @@ DEPENDENCIES
   bootstrap-sass
   carrierwave
   coffee-rails (~> 4.0.0)
+  figaro
   fog
   foreman
   jbuilder (~> 2.0)

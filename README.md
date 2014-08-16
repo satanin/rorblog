@@ -36,50 +36,35 @@ Este comando ejecuta el servidor web WEBrick y si abrimos en nuestro navegador l
 
 Como podemos ver el propio rails nos dice que utilicemos "rails generate" para crear un controlador y un modelo. Pero antes de eso vamos a hacer algunas modificaciones en nuestra app.
 
-Primero vamos a cambiar de servidor web a foreman, luego veremos porqué.
-
-Abrimos nuestro archivo 'Gemfile' y agregamos:
+### Instalando figaro
+Lo primero que vamos a hacer es instalar la gema figaro que nos ayudará a mantener nuestras variables de entorno fuera de github. La instalación es muy sencilla.
+Añadimos la gema al archivo Gemfile:
 
 ```ruby
-gem 'foreman'
+gem 'figaro'
 ```
 
-Ahora vamos a nuestra consola y ejecutamos 'bundle install' para instalar la gema.
-
+Ejecutamos en consola
 ```bash
 $ bin/bundle install
 ```
 
-Hecho esto vamos a crear el archivo '/.env' en la raiz de nuestra aplicación con el siguiente contenido:
-
-```ruby
-PORT=3000
-```
-
-foreman, cargará el contenido de este archivo y podremos utilizarlo para guardar nuestras variables de entorno.
-
-#####Es muy importante que añadamos este archivo a '.gitignore' si estamos utilizando git para que nuestras variables de entorno no se publiquen, luego veremos porqué.
-
-Ahora vamos a crear el archivo './Procfile' que utilizará foreman para arrancar el servidor.
-
-```ruby
-web: bundle exec rails server -p $PORT
-```
-
-Ahora ya podemos iniciar nuestra aplicación con el siguiente comando
+Una vez hecho esto vamos a generar la instalación de figaro con el siguiente comando
 
 ```bash
-$ foreman start
+$ bin/rails generate figaro:install
+      create  config/application.yml
+      append  .gitignore
 ```
 
-Si abrimos http://127.0.0.1:3000 deberíamos ver nuestra aplicación. Con 'Ctrl+C' en consola podemos cerrar foreman.
+Como vemos, este comando creará un nuevo archivo en  'config/' llamado application y además lo añade automáticamente al archivo '.gitignore' para que no forme parte de nuestro repositorio, más adelante veremos porqué.
 
 Ahora vamos a incluir en nuestra app las gemas necesarias.
 
 Vamos a incluir las siguientes gemas:
 
 * [Carrierwave](https://github.com/carrierwaveuploader/carrierwave) para poder subir imágenes]
-* [fog](https://github.com/fog/fog) para combinarla con carrierwave y almacenar las imágenes en Amazon S3. 
+* [fog](https://github.com/fog/fog) para combinarla con carrierwave y almacenar las imágenes en Amazon S3.
 * [kaminari](https://github.com/amatsuda/kaminari) para que el blog sea capaz de paginar y usando JQuery hacer un scroll infinito de los posts.
 * [Bootstrap-sass](https://github.com/twbs/bootstrap-sass) para el css del sitio.
 
@@ -305,19 +290,24 @@ CarrierWave.configure do |config|
 end
 ```
 
-Como véis en vez de poner las llaves que nos proporciona Amazon directamente utilizamos unas variables de entorno que definiremos en nuestro archivo '.env'
+Aquí es donde vemos la utilidad de figaro, como véis en vez de poner las llaves que nos proporciona Amazon directamente en el código utilizamos unas variables de entorno que definiremos en nuestro archivo 'config/application.yml' y que como hemos comentado anteriormente quedan fuera de nuestro repositorio puesto que al instalar figaro añade este archivo directamente a '.gitignore'.
 
 ```ruby
-PORT=3000
-AMAZON_ACCESS_KEY="your_amazon_access_key"
-AMAZON_SECRET_KEY="your_amazon_secret_key"
-AMAZON_BUCKET_NAME="your_amazon_bucket_name"
+# Add application configuration variables here, as shown below.
+# CONSTANT: value
+
+PORT: 3000
+AMAZON_ACCESS_KEY: your_amazon_access_key
+AMAZON_SECRET_KEY: your_amazon_secret_key
+AMAZON_BUCKET_NAME: your_amazon_bucket_name
 ```
 
+###### Ojo, es importante respetar el formato del archivo.
+
 Para obtener estas llaves debemos ir a la web de [amazon aws services](http://aws.amazon.com/), loguearnos o registrarnos en caso de que no lo hayamos hecho anteriormente y seguir estos pasos:
-- Crear un Bucket de amazon S3.
-- Crear un usuario(copiar credenciales en nuestro archivo '.env')
-- Dar permisos al usuario para acceder al nuevo bucket.
+* Crear un Bucket de amazon S3.
+* Crear un usuario(copiar credenciales en nuestro archivo 'config/application.yml')
+* Dar permisos al usuario para acceder al nuevo bucket.
 
 Ahora vamos a modificar nuestro archivo 'app/model/post.rb' y añadimos la siguiente línea justo debajo de la definición de clase para 'montar' nuestro uploader.
 
@@ -604,13 +594,193 @@ $("#posts-container").append("<div class='myposts'><%= escape_javascript(render(
 En estos momentos si creamos más de 5 posts en nuestro blog deberíamos notar como al llegar al final de nuestra web van cargando de forma automática los siguientes 5 y así sucesivamente.
 
 
-### Añadiendo Comentarios
+### Añadiendo Comentarios a nuestros Posts
+
 Es hora de que podamos añadir comentarios a nuestros posts.
+
+#### Generando un nuevo modelo.
 
 Para empezar, vamos a añadir un nuevo modelo a nuestra base de datos para almacenar tanto los comentarios como el autor de los mismos.
 
+```bash
+$ bin/rails generate model Comment commenter:string body:text post:references
+```
 
+Fijaos en que al final del comando tenemos un 'post:references' esto hará que el modelo comments que hemos creado esté asociado con nuestro anterior modelo post. Si abrimos el archivo 'app/models/comment.rb' veremos lo siguiente:
 
+```ruby
+#/app/models/comment.rb
+class Comment < ActiveRecord::Base
+  belongs_to :post
+end
+```
+
+En la segunda línea vemos 'belongs_to :post' que especifica la relación que tiene el modelo con la tabla post, es decir que cada comentario pertenece a un post. Ahora deberíamos completar esta relación editando el modelo post que ya teníamos con lo siguiente:
+
+```ruby
+#/app/models/post.rb
+class Post < ActiveRecord::Base
+  ...
+  has_many :comments, dependent: :destroy
+  ...
+end
+```
+
+Aquí especificamos la relación con 'has_many :comments', estableciendo que un post, puede tener varios comentarios. Además con 'dependent: :destroy' estamos diciendo que cuando borramos un post, también borramos todos los comentarios asociados a ese post.
+
+El comando que hemos ejecutado, nos ha creado una migración que podemos encontrar en la carpeta 'db/migrate'. El archivo lo podemos identificar porque tendrá como nombre un 'timestamp' y el comando que hemos utilizado para crear la migración, por ejemplo '20140814091010_create_comments.rb', el contenido del fichero es el siguiente.
+
+```ruby
+class CreateComments < ActiveRecord::Migration
+  def change
+    create_table :comments do |t|
+      t.string :commenter
+      t.text :body
+      t.references :post, index: true
+
+      t.timestamps
+    end
+  end
+end
+
+```
+
+Vamos a aplicar la migración a la base de datos utilizando el siguiente comando:
+
+```bash
+$ bin/rake db:migrate
+```
+
+#### Añadiendo nuevas rutas.
+
+Vamos a especificar en nuestra aplicación donde debemos navegar para ver los comentarios necesitamos modificar el archivo 'routes.rb' para que sea como el siguiente:
+
+```ruby
+Rails.application.routes.draw do
+  resources :posts do
+    resources :comments
+  end
+  root 'posts#index'
+end
+```
+
+Como veis hemos anidado los comentarios dentro de posts.
+
+#### Generando un controlador
+
+Necesitamos un nuevo controlador que se encargue de la creación, y eliminación de los comentarios, como ya hemos visto antes crearemos un nuevo controlador con el comando:
+
+```bash
+$ bin/rails generate controller Comments
+```
+
+Abrimos el archivo que crea el generador 'app/controllers/comments_controller.rb' y añadimos lo siguiente:
+
+```ruby
+class CommentsController < ApplicationController
+  before_action :identify_current_post, only: [:create, :destroy]
+
+   def create
+    @comment = @post.comments.create(comment_params)
+    redirect_to_post
+  end
+
+  def destroy
+    @comment = @post.comments.find(params[:id])
+    @comment.destroy
+    redirect_to_post
+  end
+
+  private
+  def identify_current_post
+    @post = Post.find(params[:post_id])
+  end
+
+  def redirect_to_post
+    redirect_to post_path(@post)
+  end
+
+  def comment_params
+    params.require(:comment).permit(:commenter, :body)
+  end
+end
+```
+
+El código no tiene ninguna complicación y es muy similar a lo visto con el controlador de posts.
+
+Ahora lo que nos falta es ir modificando las vistas para poder agregar y mostrar comentarios.
+
+### Modificando las vistas
+
+Abrimos 'app/views/posts/show.html.erb' y la modificamos para que quede de la siguiente manera.
+
+```ruby
+<div class="show-post">
+  <p id="notice"><%= notice %></p>
+  <div class="post">
+    <p class="post-title">
+      <%= @post.title %>
+    </p>
+    <div class="my-post">
+      <p class="post-image">
+        <%= image_tag(@post.image_url) %>
+      </p>
+      <p class="post-body">
+        <%= @post.body %>
+      </p>
+    </div>
+  </div>
+  <div class="post-comments">
+    <h2>Comments</h2>
+      <%= render @post.comments %>
+    <h2>Leave your comment:</h2>
+      <%= render 'comments/form' %>
+  </div>
+  <div class="show-btns">
+    <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
+    <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
+    <%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button'%>
+  </div>
+</div>
+```
+
+Vemos que necesitamos crear dos nuevas parciales o partials, '@post.comments' y 'comments/form'. Para la primera, añadimos un nuevo fichero en 'app/views/comments' con el nombre '_comment.html.erb' con el siguiente contenido que se encargará de mostrar los comentarios existentes y un botón para poder borrarlos:
+
+```ruby
+<p>
+  <strong>Commenter:</strong>
+  <%= comment.commenter %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= comment.body %>
+</p>
+<p>
+<%= link_to 'Delete Comment', [comment.post, comment],
+             method: :delete,
+             data: { confirm: 'Are you sure?' } %>
+</p>
+```
+
+La segunda parcial la crearemos añadiendo el archivo '_form.html.erb' que se encargará de mostrar un formulario con el que podremos insertar un nuevo comentario en el post.
+
+```ruby
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <p>
+    <%= f.label :commenter %><br>
+    <%= f.text_field :commenter %>
+  </p>
+  <p>
+    <%= f.label :body %><br>
+    <%= f.text_area :body %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+```
+Ahora ya podremos añadir y ver comentarios en los posts de nuestra app.
 
 ### Referencias
 Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
