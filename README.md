@@ -196,7 +196,7 @@ Editamos nuestro archivo 'app/views/posts/index.html.erb' para que en vez de mos
 </div>
 ```
 
-Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html)que todavía no existe y que tenemos que crear, para ello vamos a 'app/views/posts/' y creamos el archivo '_post.html.erb' con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
+Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html) que todavía no existe y que tenemos que crear, para ello vamos a 'app/views/posts/' y creamos el archivo '_post.html.erb' con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
 
 ```html
 <div class="post">
