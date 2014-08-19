@@ -779,8 +779,109 @@ La segunda parcial la crearemos añadiendo el archivo '_form.html.erb' que se en
     <%= f.submit %>
   </p>
 <% end %>
+>
 ```
 Ahora ya podremos añadir y ver comentarios en los posts de nuestra app.
+
+
+### Añadiendo usuarios y un poco de seguridad 
+
+#### Añadiendo autenticación
+
+Para añadir autenticación al blog vamos a utilizar la gema devise que nos facilitará mucho este aspecto. Podéis encontrar información sobre la gema en su [github](https://github.com/plataformatec/devise)
+
+Lo primero que haremos será añadir la gema devise al archivo Gemfile
+
+```ruby
+gem 'devise'
+```
+
+Ahora ejecutamos 'bundle install' para que se apliquen los cambios
+
+```bash
+$ bin/bundle install
+```
+
+Vamos a ejecutar el instalador de devise para que instale lo necesario en nuestra app.
+
+```bash
+$ bin/rails generate devise:install
+      create  config/initializers/devise.rb
+      create  config/locales/devise.en.yml
+===============================================================================
+
+Some setup you must do manually if you haven't yet:
+
+  1. Ensure you have defined default url options in your environments files. Here
+     is an example of default_url_options appropriate for a development environment
+     in config/environments/development.rb:
+
+       config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+     In production, :host should be set to the actual host of your application.
+
+  2. Ensure you have defined root_url to *something* in your config/routes.rb.
+     For example:
+
+       root to: "home#index"
+
+  3. Ensure you have flash messages in app/views/layouts/application.html.erb.
+     For example:
+
+       <p class="notice"><%= notice %></p>
+       <p class="alert"><%= alert %></p>
+
+  4. If you are deploying on Heroku with Rails 3.2 only, you may want to set:
+
+       config.assets.initialize_on_precompile = false
+
+     On config/application.rb forcing your application to not access the DB
+     or load models when precompiling your assets.
+
+  5. You can copy Devise views (for customization) to your app by running:
+
+       rails g devise:views
+
+===============================================================================
+
+```
+
+Como vemos el instalador nos da una serie de configuraciones que tenemos que aplicar en la medida de lo posible. En nuestro caso tenemos que añadir la siguientes líneas al archivo 'config/enviroments/development.rb'
+
+```ruby
+# Devise config
+config.action_mailer.default_url_options = { host: 'localhost:3000' }
+```
+
+Esta línea le dice a 'action mailer' que el host que debe usar es 'localhost:3000' que es la dirección actual de nuestra web. Cuando estemos en producción deberemos añadir esa misma linea de comando al archivo  'config/enviroments/production.rb' pero en vez de usar 'localhost:3000' utilizaremos la dirección de la aplicación.
+
+Como indicaba en la instalación vamos a necesitar modificar el archivo 'application.html.erb' y añadiremos ahí las etiquetas '<notice>' y '<alert>' dejando el archivo de la siguiente forma:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rorblog</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div class="container">
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
+  <%= yield %>
+</div>
+</body>
+</html>
+```
+
+Nosotros ya teníamos etiquetas '<notice>' en los archivos 'index.html.erb' y 'show.html.erb' así que vamos a eliminarlas y dejaremos estas que al estar en el archivo 'application.html.erb' se cargará de forma automática antes de cada vista y por lo tanto no nesitaremos el resto.
+
+De momento no necesitaremos realizar más pasos de los indicados en el instalador así que continuamos con la configuración e instalación de devise.
+
+
+
 
 ### Referencias
 Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
@@ -788,6 +889,7 @@ Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
 * [How to create infinite scroll with jQuery](https://github.com/amatsuda/kaminari/wiki/How-To:-Create-Infinite-Scrolling-with-jQuery)
 * [Infinite Scrolling in Rails: The Basics](http://www.sitepoint.com/infinite-scrolling-rails-basics/)
 * [Fog Gem](https://github.com/fog/fog)
+* [Devise](https://github.com/plataformatec/devise)
 
 ### Agradecimientos
 Gracias a [Max](https://github.com/maxvlc) y [Salva](https://github.com/salveta) por ayudarme a crear, mejorar y testear el tutorial.
