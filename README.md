@@ -196,7 +196,7 @@ Editamos nuestro archivo 'app/views/posts/index.html.erb' para que en vez de mos
 </div>
 ```
 
-Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html)que todavía no existe y que tenemos que crear, para ello vamos a 'app/views/posts/' y creamos el archivo '_post.html.erb' con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
+Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html) que todavía no existe y que tenemos que crear, para ello vamos a 'app/views/posts/' y creamos el archivo '_post.html.erb' con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
 
 ```html
 <div class="post">
@@ -542,6 +542,9 @@ Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y d
 <div class="page-header">
   <h1>My posts</h1>
     Created using Ruby on Rails
+    <div class="header-btn">
+    <%= link_to 'New Post',new_post_path, :class=>"btn btn-default" ,:type=>'button' %>
+  </div>
 </div>
 <p id="notice"><%= notice %></p>
 
@@ -779,8 +782,277 @@ La segunda parcial la crearemos añadiendo el archivo '_form.html.erb' que se en
     <%= f.submit %>
   </p>
 <% end %>
+>
 ```
 Ahora ya podremos añadir y ver comentarios en los posts de nuestra app.
+
+
+### Añadiendo usuarios y un poco de seguridad
+
+#### Añadiendo autenticación
+
+Para añadir autenticación al blog vamos a utilizar la gema devise que nos facilitará mucho este aspecto. Podéis encontrar información sobre la gema en su [github](https://github.com/plataformatec/devise)
+
+Lo primero que haremos será añadir la gema devise al archivo Gemfile
+
+```ruby
+gem 'devise'
+```
+
+Ahora ejecutamos 'bundle install' para que se apliquen los cambios
+
+```bash
+$ bin/bundle install
+```
+
+Vamos a ejecutar el instalador de devise para que instale lo necesario en nuestra app.
+
+```bash
+$ bin/rails generate devise:install
+      create  config/initializers/devise.rb
+      create  config/locales/devise.en.yml
+===============================================================================
+
+Some setup you must do manually if you haven't yet:
+
+  1. Ensure you have defined default url options in your environments files. Here
+     is an example of default_url_options appropriate for a development environment
+     in config/environments/development.rb:
+
+       config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+     In production, :host should be set to the actual host of your application.
+
+  2. Ensure you have defined root_url to *something* in your config/routes.rb.
+     For example:
+
+       root to: "home#index"
+
+  3. Ensure you have flash messages in app/views/layouts/application.html.erb.
+     For example:
+
+       <p class="notice"><%= notice %></p>
+       <p class="alert"><%= alert %></p>
+
+  4. If you are deploying on Heroku with Rails 3.2 only, you may want to set:
+
+       config.assets.initialize_on_precompile = false
+
+     On config/application.rb forcing your application to not access the DB
+     or load models when precompiling your assets.
+
+  5. You can copy Devise views (for customization) to your app by running:
+
+       rails g devise:views
+
+===============================================================================
+
+```
+
+Como vemos el instalador nos da una serie de configuraciones que tenemos que aplicar en la medida de lo posible. En nuestro caso tenemos que añadir la siguientes líneas al archivo 'config/enviroments/development.rb'
+
+```ruby
+# Devise config
+config.app_domain = 'localhost:3000'
+config.action_mailer.default_url_options = { host: config.app_domain }
+```
+
+Esta línea le dice a 'action mailer' que el host que debe usar es 'localhost' que es la dirección actual de nuestra web. Cuando estemos en producción deberemos añadir esa misma linea de comando al archivo  'config/enviroments/production.rb' pero en vez de usar 'localhost:3000' utilizaremos la dirección de la aplicación.
+
+Como indicaba en la instalación vamos a necesitar modificar el archivo 'application.html.erb' y añadiremos ahí las etiquetas '<notice>' y '<alert>' dejando el archivo de la siguiente forma:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rorblog</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div class="container">
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
+  <%= yield %>
+</div>
+</body>
+</html>
+```
+
+Nosotros ya teníamos etiquetas '<notice>' en los archivos 'index.html.erb' y 'show.html.erb' así que vamos a eliminarlas y dejaremos estas que al estar en el archivo 'application.html.erb' se cargará de forma automática antes de cada vista y por lo tanto no nesitaremos el resto.
+
+De momento no necesitaremos realizar más pasos de los indicados en el instalador así que continuamos con la configuración e instalación de devise.
+
+Vamos a crear un nuevo modelo 'User' que se encargará de almacenar la información de usuario
+
+```bash
+$ bin/rails generate devise User
+      invoke  active_record
+      create    db/migrate/20140819102410_devise_create_users.rb
+      create    app/models/user.rb
+      invoke    test_unit
+      create      test/models/user_test.rb
+      create      test/fixtures/users.yml
+      insert    app/models/user.rb
+       route  devise_for :users
+
+```
+
+Como vemos esto nos crea una nueva 'migration', un nuevo modelo, archivos para hacer test, y nos modifica las rutas para que funcionen con nuestro nuevo modelo. Las vistas las genera devise automáticamente si quisiéramos modificarlas podríamos utilizar el comando que nos proponía en la instalación
+
+```bash
+$ bin/rails generate devise:views
+      invoke  Devise::Generators::SharedViewsGenerator
+      create    app/views/devise/shared
+      create    app/views/devise/shared/_links.erb
+      invoke  form_for
+      create    app/views/devise/confirmations
+      create    app/views/devise/confirmations/new.html.erb
+      create    app/views/devise/passwords
+      create    app/views/devise/passwords/edit.html.erb
+      create    app/views/devise/passwords/new.html.erb
+      create    app/views/devise/registrations
+      create    app/views/devise/registrations/edit.html.erb
+      create    app/views/devise/registrations/new.html.erb
+      create    app/views/devise/sessions
+      create    app/views/devise/sessions/new.html.erb
+      create    app/views/devise/unlocks
+      create    app/views/devise/unlocks/new.html.erb
+      invoke  erb
+      create    app/views/devise/mailer
+      create    app/views/devise/mailer/confirmation_instructions.html.erb
+      create    app/views/devise/mailer/reset_password_instructions.html.erb
+      create    app/views/devise/mailer/unlock_instructions.html.erb
+
+```
+
+Aquí podemos ver todas las vista que crea devise incluídos los mails de confirmación, reiniciar contraseñas y desbloqueo de cuentas.
+
+Vamos a repasar la configuración de Devise y la migration antes de ejecutarla, en su github llegado este momento nos piden que repasemos el modelo y la migration y es lo que vamos a hacer.
+
+Como vemos en el modelo generado por devise, no tenemos activada por defecto la confiración del email proporcionado por el usuario para darse de alta, así que vamos a cambiar esto para que se le envíe un mail de confirmación con un enlace para confirmar el email. Abrimos 'app/models/user.rb' y añadimos ':confirmable' en devise.
+
+```ruby
+class User < ActiveRecord::Base
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable and :omniauthable
+  devise :database_authenticatable, :registerable, :confirmable,
+         :recoverable, :rememberable, :trackable, :validatable
+end
+```
+
+
+Ahora vamos a la migration generada por 'devise' y la modificamos para que los campos requeridos para confirmar el correo se apliquen en la migración.
+
+```ruby
+class DeviseCreateUsers < ActiveRecord::Migration
+  def change
+    create_table(:users) do |t|
+      ## Database authenticatable
+      t.string :email,              null: false, default: ""
+      t.string :encrypted_password, null: false, default: ""
+
+      ## Recoverable
+      t.string   :reset_password_token
+      t.datetime :reset_password_sent_at
+
+      ## Rememberable
+      t.datetime :remember_created_at
+
+      ## Trackable
+      t.integer  :sign_in_count, default: 0, null: false
+      t.datetime :current_sign_in_at
+      t.datetime :last_sign_in_at
+      t.string   :current_sign_in_ip
+      t.string   :last_sign_in_ip
+
+      ## Confirmable
+      t.string   :confirmation_token
+      t.datetime :confirmed_at
+      t.datetime :confirmation_sent_at
+      t.string   :unconfirmed_email # Only if using reconfirmable
+
+      ## Lockable
+      # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
+      # t.string   :unlock_token # Only if unlock strategy is :email or :both
+      # t.datetime :locked_at
+
+
+      t.timestamps
+    end
+
+    add_index :users, :email,                unique: true
+    add_index :users, :reset_password_token, unique: true
+    # add_index :users, :confirmation_token,   unique: true
+    # add_index :users, :unlock_token,         unique: true
+  end
+end
+```
+
+Ahora ya podemos aplicar la migración con
+
+```bash
+$ bin/rake db:migrate
+```
+
+En estos nuestra aplicación funciona pero no tenemos modificadas nuestras vistas con botones o enlaces para loguear o inscribir nuevos usuarios. Además vamos a requerir que un usuario esté logueado antes de poder crear un nuevo post.
+
+Vamos a empezar con esto último ya que es bastante sencillo. Editamos 'app/controllers/posts_controller.rb' y agregamos un 'before_filter' debajo del que ya teníamos.
+
+```ruby
+class PostsController < ApplicationController
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+
+  ...
+end
+```
+
+Si vamos a nuestra aplicación e intentamos crear un nuevo post, nos redirigirá automáticamente a una vista para realizar el login de usuario, de paso especificamos que nos obligue a estar autentificados también para editar, actualizar y eliminar posts.
+
+Evidentemente no podremos hacer login porque nuestro usuario todavía no está creado, pero desde ahí podemos ir a 'sign up' y crear un nuevo usuario, el problema es que todavía no hemos configurado el correo para que se envíe y como hemos especificado antes necesitamos confirmar el correo, vamos a confirmar correctamente el correo antes de continuar.
+
+Para este ejemplo voy a utilizar una cuenta de gmail para enviar el correo, abrimos 'config/environments/development.rb' y añadimos la siguiente configuración:
+
+```ruby
+Rails.application.configure do
+  ...
+  # Devise config
+  config.app_domain = 'localhost:3000'
+  config.action_mailer.default_url_options = { host: config.app_domain }
+
+  # Email
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.smtp_settings = {
+    :enable_starttls_auto => true,
+    :address => "smtp.gmail.com",
+    :port => 587,
+    :user_name => ENV["GMAIL_USER_NAME"],
+    :password => ENV["GMAIL_PASSWORD"],
+    :authentication => 'plain',
+    :openssl_verify_mode  => 'none',
+  }
+end
+
+```
+
+Como ya hemos visto anteriormente debemos configurar las variables de entorno 'GMAIL_USER_NAME' y 'GMAIL_PASSWORD' en el archivo 'config/application.yml' para que sean cargadas por figaro.
+
+###### Añadiendo botones a nuestra vista
+
+```ruby
+<nav class="navbar navbar-default" role="navigation">
+<%- if controller_name != 'sessions' %>
+<%= link_to "Sign in", new_user_session_path, :class=>'btn btn-default navbar-btn'%>
+  <%= link_to "Sign up", new_user_registration_path, :class=>'btn btn-default navbar-btn'%>
+<% else %>
+  <%= link_to "Sign out", destroy_user_session_path, method: :delete, :class=>'btn btn-primary navbar-btn' %>
+<% end -%>
+</nav>
+
+```
 
 ### Referencias
 Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
@@ -788,6 +1060,7 @@ Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
 * [How to create infinite scroll with jQuery](https://github.com/amatsuda/kaminari/wiki/How-To:-Create-Infinite-Scrolling-with-jQuery)
 * [Infinite Scrolling in Rails: The Basics](http://www.sitepoint.com/infinite-scrolling-rails-basics/)
 * [Fog Gem](https://github.com/fog/fog)
+* [Devise](https://github.com/plataformatec/devise)
 
 ### Agradecimientos
 Gracias a [Max](https://github.com/maxvlc) y [Salva](https://github.com/salveta) por ayudarme a crear, mejorar y testear el tutorial.

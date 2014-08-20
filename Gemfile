@@ -45,4 +45,4 @@ gem 'fog'
 gem 'kaminari'
 gem 'bootstrap-sass'
 gem 'figaro'
-
+gem 'devise'

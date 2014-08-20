@@ -5,8 +5,8 @@
       <%= @post.title %>
     </p>
     <div class="my-post">
-      <p class="post-image">
-        <%= image_tag(@post.image_url) %>
+      <p class="post-image-container">
+        <%= image_tag(@post.image_url, :class=>'img-responsive') %>
       </p>
       <p class="post-body">
         <%= @post.body %>
