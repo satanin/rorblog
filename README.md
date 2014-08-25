@@ -1350,6 +1350,7 @@ end
 ```
 
 
+
 ### Referencias
 Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:
 * [Carrierwave Gem](https://github.com/carrierwaveuploader/carrierwave)
