@@ -1,3 +1,20 @@
 // Place all the styles related to the posts controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.post-details-container{
+  display:block;
+  padding: 0px 10px 0px 10px;
+}
+
+.post-user{
+  display:inline-block;
+  margin-right:10px;
+}
+.post-timestamp{
+  display:inline-block;
+}
+
+.post-body{
+  clear:right;
+}

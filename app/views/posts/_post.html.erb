@@ -2,16 +2,16 @@
   <div class="post-image-container">
     <%= image_tag(post.image_url, :class => 'img-responsive') %>
   </div>
-  <div class="post-details-container">
-    <div class="post-timestamp">
-      <em><%= post.timestamp %></em>
-    </div>
-    <div class="post-user">
-      <%= post.user.name %>
-    </div>
-  </div>
   <div class="post-title">
     <%= link_to post.title, post_path(post) %>
+  </div>
+  <div class="post-details-container">
+    <div class="post-timestamp">
+     on <em><%= post.timestamp %></em>
+    </div>
+    <div class="post-user">
+     by <%= post.user.name %>
+    </div>
   </div>
   <div class="post-body">
     <p><%= truncate(strip_tags(post.body), length: 600) %></p>

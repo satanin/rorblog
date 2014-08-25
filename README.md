@@ -30,7 +30,7 @@ $ bin/rails server
 ```
 
 Este comando ejecuta el servidor web WEBrick y si abrimos en nuestro navegador la dirección http://127.0.0.1:3000 deberíamos ver nuestra página de inicio de rails.
-(Para detener el servidor WEBrick presiona 'Crtl-C' en tu teclado.)
+(Para detener el servidor WEBrick presiona `Crtl-C` en tu teclado.)
 
 ![Welcome to Rails](http://i.imgur.com/pR0qe9M.png)
 
@@ -57,7 +57,7 @@ $ bin/rails generate figaro:install
       append  .gitignore
 ```
 
-Como vemos, este comando creará un nuevo archivo en  'config/' llamado application y además lo añade automáticamente al archivo '.gitignore' para que no forme parte de nuestro repositorio, más adelante veremos porqué.
+Como vemos, este comando creará un nuevo archivo en  `config/` llamado application y además lo añade automáticamente al archivo `.gitignore` para que no forme parte de nuestro repositorio, más adelante veremos porqué.
 
 Ahora vamos a incluir en nuestra app las gemas necesarias.
 
@@ -91,19 +91,19 @@ Vamos a hacer un install de jQuery para que se descarguen los archivos necesario
 $ bin/rails generate jquery:install
 ```
 
-Descargamos el plugin de jQuery para hacer infinite scroll y lo meteremos en nuestra app en 'vendor/assets/javascripts/jquery.infinitescroll.js' ejecutando este comando en el terminal.
+Descargamos el plugin de jQuery para hacer infinite scroll y lo meteremos en nuestra app en `vendor/assets/javascripts/jquery.infinitescroll.js` ejecutando este comando en el terminal.
 
 ```bash
 $ curl -k -o vendor/assets/javascripts/jquery.infinitescroll.js https://raw.githubusercontent.com/paulirish/infinite-scroll/master/jquery.infinitescroll.js
 ```
 
-Una vez descargada haremos que nuestra app pueda utilizar el plugin cuando sea necesario, modificamos el archivo 'app/assets/javascripts/application.js' y añadimos lo siguiente al final:
+Una vez descargada haremos que nuestra app pueda utilizar el plugin cuando sea necesario, modificamos el archivo `app/assets/javascripts/application.js` y añadimos lo siguiente al final:
 
 ```js
 //= require jquery.infinitescroll
 ```
 
-Creamos un archivo nuevo en 'app/assets/stylesheets/' con el nombre 'styles.css.scss' y añadiremos la siguiente línea.
+Creamos un archivo nuevo en `app/assets/stylesheets/` con el nombre `styles.css.scss` y añadiremos la siguiente línea.
 
 ```css
 # app/assets/stylesheets/styles.css.scss
@@ -122,7 +122,7 @@ Para general el controlador utilizaremos el siguiente comando de rails:
 $ bin/rails generate controller posts
 ```
 
-Ahora vamos a editar nuestro archivo 'config/routes.rb' para configurar las rutas de nuestra aplicación.
+Ahora vamos a editar nuestro archivo `config/routes.rb` para configurar las rutas de nuestra aplicación.
 
 ```ruby
 # app/config/routes.rb
@@ -134,14 +134,14 @@ Rails.application.routes.draw do
 end
 ```
 
-La línea 'resources :posts' generará las rutas para nuestro recién creado controlador y la línea "root 'posts#index'" le dice a nuestra aplicación que al entrar a nuestro site debe redirigir las peticiones a la ruta '/posts/index'.
+La línea `resources :posts` generará las rutas para nuestro recién creado controlador y la línea "root `posts#index`" le dice a nuestra aplicación que al entrar a nuestro site debe redirigir las peticiones a la ruta `/posts/index`.
 
 Si abrimos ahora nuestra aplicación en el navegador (http://127.0.0.1:3000) veremos que nos da un error debido  a que en nuestro controlador no existe todavía un método index.
 
 ![PostsController error](http://i.imgur.com/OQCHf0B.png)
 
 Vamos a solucionar este problema.
-Abrimos 'app/controllers/posts_controller.rb' y creamos un método index.
+Abrimos `app/controllers/posts_controller.rb` y creamos un método index.
 
 ```ruby
 class PostsController < ApplicationController
@@ -154,11 +154,11 @@ Si volvemos a cargar nuestra app en el navegador (http://127.0.0.1:3000) veremos
 
 ![Template not found](http://i.imgur.com/xj4fJvC.png])
 
-Para solucionar esto vamos a 'app/views/posts/' y crearemos el archivo 'index.html.erb' y de momento agregamos lo siguiente:
+Para solucionar esto vamos a `app/views/posts/` y crearemos el archivo `index.html.erb` y de momento agregamos lo siguiente:
 
     Hola Mundo
 
-Ahora si guardamos el archivo y volvemos a cargar la página en el navegador (http://127.0.0.1:3000) ya veremos nuestro 'Hola Mundo'.
+Ahora si guardamos el archivo y volvemos a cargar la página en el navegador (http://127.0.0.1:3000) ya veremos nuestro `Hola Mundo`.
 
 
 #### Generando el modelo
@@ -170,15 +170,15 @@ Ejecutamos el siguiente comando en la terminal.
     $ bin/rake db:migrate
 ```
 
-Con estos dos comandos hemos creado una nueva ['migration'](http://guides.rubyonrails.org/migrations.html) que añadirá una tabla en la base de datos llamada post con las siguientes columnas: title, body e image. Además con el comando 'bin/rake db:migrate' haremos que nuestra 'migration' sea efectiva y se apliquen nuestros cambios.
+Con estos dos comandos hemos creado una nueva ['migration'](http://guides.rubyonrails.org/migrations.html) que añadirá una tabla en la base de datos llamada post con las siguientes columnas: title, body e image. Además con el comando `bin/rake db:migrate` haremos que nuestra `migration` sea efectiva y se apliquen nuestros cambios.
 
-**Nota: Podemos ver la estructura de nuestra base de datos si vamos al archivo 'db/schema.rb'.
+**Nota: Podemos ver la estructura de nuestra base de datos si vamos al archivo `db/schema.rb`.
 
 #### Visualizar nuestros posts
 
 Vamos a realizar algunos cambios en el controlador y en las vistas para poder visualizar los posts que vayamos creando.
 
-Editamos nuestro archivo 'app/views/posts/index.html.erb' para que en vez de mostrar 'Hola Mundo' quede de la siguiente forma:
+Editamos nuestro archivo `app/views/posts/index.html.erb` para que en vez de mostrar `Hola Mundo` quede de la siguiente forma:
 
 ```html
 <div class="page-header">
@@ -196,7 +196,7 @@ Editamos nuestro archivo 'app/views/posts/index.html.erb' para que en vez de mos
 </div>
 ```
 
-Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html) que todavía no existe y que tenemos que crear, para ello vamos a 'app/views/posts/' y creamos el archivo '_post.html.erb' con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
+Como vemos en `<%= render @posts %>` estamos llamando a una parcial utilizando [render](http://guides.rubyonrails.org/layouts_and_rendering.html) que todavía no existe y que tenemos que crear, para ello vamos a `app/views/posts/` y creamos el archivo `_post.html.erb` con el siguiente contenido. Aunque el aspecto no lo vamos a tratar en este caso el nombre de las clases e id's es importante ya que nuestro javascript las identificará. Si cambiais el nombre de estas clases e id's no os funcionará el infinite scroll.
 
 ```html
 <div class="post">
@@ -213,9 +213,9 @@ Como vemos en '<%= render @posts %>' estamos llamando a una parcial utilizando [
 </div>
 ```
 
-Aqui vemos que cada post tendrá un título que a su vez será un enlace para ver el post, debajo del post tenemos la fecha (post.timestamp) y después el cuerpo del post. El método en el que estamos llamando a la fecha de creación del post, con 'post.timestamp' no existe, así que nos vamos a nuestro modelo a crearlo.
+Aqui vemos que cada post tendrá un título que a su vez será un enlace para ver el post, debajo del post tenemos la fecha (post.timestamp) y después el cuerpo del post. El método en el que estamos llamando a la fecha de creación del post, con `post.timestamp` no existe, así que nos vamos a nuestro modelo a crearlo.
 
-Abrimos 'app/models/post.rb' y añadimos el método timestamp.
+Abrimos `app/models/post.rb` y añadimos el método timestamp.
 
 ```ruby
 class Post < ActiveRecord::Base
@@ -225,9 +225,9 @@ class Post < ActiveRecord::Base
 end
 ```
 
-El método 'timestamp' llama a 'created_at' que es una columna de nuestro modelo (añadida de forma automática por el generador del modelo) y la formatea con ['strftime'](http://www.ruby-doc.org/core-2.1.2/Time.html#method-i-strftime) para que sea más legible podéis personalizar esto a vuestro gusto.
+El método `timestamp` llama a `created_at` que es una columna de nuestro modelo (añadida de forma automática por el generador del modelo) y la formatea con ['strftime'](http://www.ruby-doc.org/core-2.1.2/Time.html#method-i-strftime) para que sea más legible podéis personalizar esto a vuestro gusto.
 
-Vamos a modificar también nuestro controlador para que la variable que estamos usando '@posts' sea accesible desde la vista.
+Vamos a modificar también nuestro controlador para que la variable que estamos usando `@posts` sea accesible desde la vista.
 
 ```ruby
 class PostsController < ApplicationController
@@ -243,7 +243,7 @@ Recordad que muchos de los cambios necesitan que reiniciemos nuestro servidor we
 
 #### Configurando carrierwave y fog para Amazon S3
 
-Para poder subir imágenes con nuestros posts debemos configurar primero nuestra app, en este caso vamos a utilizar 'carrierwave' y 'fog' para almacenar nuestras imágenes directamente en [Amazon AWS Services](http://aws.amazon.com/).
+Para poder subir imágenes con nuestros posts debemos configurar primero nuestra app, en este caso vamos a utilizar `carrierwave` y `fog` para almacenar nuestras imágenes directamente en [Amazon AWS Services](http://aws.amazon.com/).
 
 Lo primero que vamos a hacer es generar un uploader para nuestras imágenes.
 
@@ -251,7 +251,7 @@ Lo primero que vamos a hacer es generar un uploader para nuestras imágenes.
     $ bin/rails generate uploader PostImage
 ```
 
-Esto nos creará un fichero 'app/uploaders/post_image_uploader.rb' que será nuestro uploader, abrimos el fichero y modificamos el contenido:
+Esto nos creará un fichero `app/uploaders/post_image_uploader.rb` que será nuestro uploader, abrimos el fichero y modificamos el contenido:
 
 ```ruby
 class PostImageUploader < CarrierWave::Uploader::Base
@@ -267,11 +267,11 @@ class PostImageUploader < CarrierWave::Uploader::Base
 end
 ```
 
-* El método 'storage_dir' se encargará de establecer el directorio en el que se van a guardar las imágenes.
-* El método 'extension_white_list' crea una lista blanca de las extensiones que podremos subir.
-* 'storage:fog' establece el tipo de almacenamiento, en este caso utilizaremos fog ya que vamos a almacenar nuestras imágenes en la nube con la ayuda de esa gema.
+* El método `storage_dir` se encargará de establecer el directorio en el que se van a guardar las imágenes.
+* El método `extension_white_list` crea una lista blanca de las extensiones que podremos subir.
+* `storage:fog` establece el tipo de almacenamiento, en este caso utilizaremos fog ya que vamos a almacenar nuestras imágenes en la nube con la ayuda de esa gema.
 
-Para que 'fog' sepa en que servicio tiene que almacenar las imágenes y con qué credenciales, vamos a crear un nuevo 'initializer' al que podremos llamar por ejemplo 'carrierwave_fog.rb' y lo guardamos en 'config/initializers/'.
+Para que `fog` sepa en que servicio tiene que almacenar las imágenes y con qué credenciales, vamos a crear un nuevo `initializer` al que podremos llamar por ejemplo `carrierwave_fog.rb` y lo guardamos en `config/initializers/`.
 
 El archivo tendrá el siguiente contenido:
 
@@ -290,7 +290,7 @@ CarrierWave.configure do |config|
 end
 ```
 
-Aquí es donde vemos la utilidad de figaro, como véis en vez de poner las llaves que nos proporciona Amazon directamente en el código utilizamos unas variables de entorno que definiremos en nuestro archivo 'config/application.yml' y que como hemos comentado anteriormente quedan fuera de nuestro repositorio puesto que al instalar figaro añade este archivo directamente a '.gitignore'.
+Aquí es donde vemos la utilidad de figaro, como véis en vez de poner las llaves que nos proporciona Amazon directamente en el código utilizamos unas variables de entorno que definiremos en nuestro archivo `config/application.yml` y que como hemos comentado anteriormente quedan fuera de nuestro repositorio puesto que al instalar figaro añade este archivo directamente a `.gitignore`.
 
 ```ruby
 # Add application configuration variables here, as shown below.
@@ -306,10 +306,10 @@ AMAZON_BUCKET_NAME: your_amazon_bucket_name
 
 Para obtener estas llaves debemos ir a la web de [amazon aws services](http://aws.amazon.com/), loguearnos o registrarnos en caso de que no lo hayamos hecho anteriormente y seguir estos pasos:
 * Crear un Bucket de amazon S3.
-* Crear un usuario(copiar credenciales en nuestro archivo 'config/application.yml')
+* Crear un usuario(copiar credenciales en nuestro archivo `config/application.yml`)
 * Dar permisos al usuario para acceder al nuevo bucket.
 
-Ahora vamos a modificar nuestro archivo 'app/model/post.rb' y añadimos la siguiente línea justo debajo de la definición de clase para 'montar' nuestro uploader.
+Ahora vamos a modificar nuestro archivo `app/model/post.rb` y añadimos la siguiente línea justo debajo de la definición de clase para `montar` nuestro uploader.
 
 ```ruby
 class Post < ActiveRecord::Base
@@ -326,9 +326,9 @@ end
 
 #### Crear los métodos new, create y show
 
- * Modificamos el archivo 'posts_controller.rb' para añadir los métodos "new,create y show" que necesitaremos para poder agregar mensajes a nuestra app.
- * Creamos los métodos privados 'post_params', que nos asegurará que los parámetros que vamos a incluir en nuestra tabla sean los adecuados y 'set_post' que le dirá a la vista que post es el que tiene que editar, mostrar, actualizar o borrar.
- * Añadimos un 'before_action' para que actúe antes de los métodos ':show, :edit, :update y :destroy'
+ * Modificamos el archivo `posts_controller.rb` para añadir los métodos "new,create y show" que necesitaremos para poder agregar mensajes a nuestra app.
+ * Creamos los métodos privados `post_params`, que nos asegurará que los parámetros que vamos a incluir en nuestra tabla sean los adecuados y `set_post` que le dirá a la vista que post es el que tiene que editar, mostrar, actualizar o borrar.
+ * Añadimos un `before_action` para que actúe antes de los métodos `:show, :edit, :update y :destroy`
  * Modificamos el método index para que en vez de mostrar todos los artículos, los muestre en orden inverso a la fecha de creación.
 
 ```ruby
@@ -381,7 +381,7 @@ Creamos una nueva vista en 'apps/views/posts/' y le llamaremos 'new.html.erb' in
 <%= link_to 'Back', posts_path, :class=>'btn btn-default' %>
 ```
 
-también tendremos que crear un parcial en la carpeta 'app/views/posts/' con el nombre '_form.html.erb' con el siguiente código. Aquí es donde tendremos el código de nuestro formulario para insertar nuevos posts.
+también tendremos que crear un parcial en la carpeta `app/views/posts/` con el nombre `_form.html.erb` con el siguiente código. Aquí es donde tendremos el código de nuestro formulario para insertar nuevos posts.
 
 ```html
 <%= form_for(@post) do |f|  %>
@@ -419,7 +419,7 @@ también tendremos que crear un parcial en la carpeta 'app/views/posts/' con el 
 ```
 
 
-Vamos a crear también una nueva vista 'show.html.erb' que nos mostrará el post y nos permitirá modificarlo, borrarlo o volver a la página principal.
+Vamos a crear también una nueva vista `show.html.erb` que nos mostrará el post y nos permitirá modificarlo, borrarlo o volver a la página principal.
 
 ```html
 <div class="show-post">
@@ -445,7 +445,7 @@ Vamos a crear también una nueva vista 'show.html.erb' que nos mostrará el post
 </div>
 ```
 
-Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra página principal para crear nuevos posts. Modificamos 'app/views/posts/index.html.erb' y lo dejamos de la siguiente forma:
+Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra página principal para crear nuevos posts. Modificamos `app/views/posts/index.html.erb` y lo dejamos de la siguiente forma:
 
 ```html
 <div class="page-header">
@@ -465,8 +465,8 @@ Realizados todos estos cambios sólo nos faltaría agregar un botón a nuestra p
 Si hemos seguido todos los pasos correctamente ya podríamos crear nuestro primer post en nuestra app.
 
 
-El paso siguiente va a ser hacer que el botón 'Editar' que acabamos de colocar en 'app/views/show.html.erb' sea funcional, de momento no tenemos ni el método en nuestro controlador, vamos a crearlo.
-Abrimos 'app/controllers/posts_controller.rb' y agregaremos el método editar.
+El paso siguiente va a ser hacer que el botón `Editar` que acabamos de colocar en `app/views/show.html.erb` sea funcional, de momento no tenemos ni el método en nuestro controlador, vamos a crearlo.
+Abrimos `app/controllers/posts_controller.rb` y agregaremos el método editar.
 
 ```ruby
 class PostsController < ApplicationController
@@ -479,7 +479,7 @@ class PostsController < ApplicationController
 end
 ```
 
-Una vez creado vamos a crearnos una vista que nos permita editar los valores del post. Para ello creamos el archivo 'edit.html.erb' dentro de nuestra carpeta de vistas 'app/views/posts/'
+Una vez creado vamos a crearnos una vista que nos permita editar los valores del post. Para ello creamos el archivo `edit.html.erb` dentro de nuestra carpeta de vistas `app/views/posts/`
 
 ```html
 <h1>Editing post</h1>
@@ -490,7 +490,7 @@ Una vez creado vamos a crearnos una vista que nos permita editar los valores del
 <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
 ```
 
-Si intentamos actualizar nuestro post veremos que nos da un error puesto que no tenemos creado el método 'update' en nuestro controlador, así que vamos a añadirlo. De paso vamos a añadir también el método 'destroy' que nos permitirá borrar un post.
+Si intentamos actualizar nuestro post veremos que nos da un error puesto que no tenemos creado el método `update` en nuestro controlador, así que vamos a añadirlo. De paso vamos a añadir también el método `destroy` que nos permitirá borrar un post.
 
 ###### Ojo, tanto estos métodos como el método edit deben estar por encima de la linea 'private' de nuestra clase.
 
@@ -522,7 +522,7 @@ class PostsController < ApplicationController
 end
 ```
 
-Por último vamos a añadir el botón 'Borrar' en nuestra vista 'show.html.erb' que nos permitirá borrar ese post, en principio lo situamos al lado de nuestro botón editar.
+Por último vamos a añadir el botón `Borrar` en nuestra vista `show.html.erb` que nos permitirá borrar ese post, en principio lo situamos al lado de nuestro botón editar.
 
 ```html
 ...
@@ -536,7 +536,7 @@ Si abrimos ahora nuestra aplicación en el navegador ya debería ser completamen
 
 #### Configurando la paginación y el infinite scroll
 
-Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y dejarlo de la siguiente forma:
+Para que nuestro `index.html.erb` soporte paginación tendremos que editarlo y dejarlo de la siguiente forma:
 
 ```html
 <div class="page-header">
@@ -560,7 +560,7 @@ Para que nuestro 'index.html.erb' soporte paginación tendremos que editarlo y d
 
 ```
 
-Si os fijáis casi al final del archivo tenemos '<%= paginate @posts %>' que se encargará de hacer una llamada Javascript para cargar más posts de forma dinámica.
+Si os fijáis casi al final del archivo tenemos `<%= paginate @posts %>` que se encargará de hacer una llamada Javascript para cargar más posts de forma dinámica.
 
 Abrimos nuestro modelo y modificamos el código para que quede de la siguiente forma:
 
@@ -575,9 +575,9 @@ class Post < ActiveRecord::Base
 end
 ```
 
-Si modificamos 'paginates_per 5' y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para definir el número de posts que veremos antes de cargar nuevos posts.
+Si modificamos `paginates_per 5` y cambiamos el valor, cambiaremos el número de posts que veremos por página en caso de no soportar javascript en el navegador, aunque aquí nos servirá para definir el número de posts que veremos antes de cargar nuevos posts.
 
-Lo siguiente será modificar el archivo 'posts.js.coffee' que se encuentra dentro de 'app/assets/javascripts/' con el siguiente código:
+Lo siguiente será modificar el archivo `posts.js.coffee` que se encuentra dentro de `app/assets/javascripts/` con el siguiente código:
 
 ```coffee
 # app/assets/javascripts/posts.js.coffee
@@ -588,7 +588,7 @@ $(document).ready ->
     itemSelector: "#posts-container div.post"
 ```
 
-Para finalizar la configuración del infinite scroll creamos una vista javascript en 'app/views/posts/' con el nombre 'index.js.erb':
+Para finalizar la configuración del infinite scroll creamos una vista javascript en `app/views/posts/` con el nombre `index.js.erb`:
 
 ```js
 $("#posts-container").append("<div class='myposts'><%= escape_javascript(render(@posts)) %></div>");
@@ -609,7 +609,7 @@ Para empezar, vamos a añadir un nuevo modelo a nuestra base de datos para almac
 $ bin/rails generate model Comment commenter:string body:text post:references
 ```
 
-Fijaos en que al final del comando tenemos un 'post:references' esto hará que el modelo comments que hemos creado esté asociado con nuestro anterior modelo post. Si abrimos el archivo 'app/models/comment.rb' veremos lo siguiente:
+Fijaos en que al final del comando tenemos un `post:references` esto hará que el modelo comments que hemos creado esté asociado con nuestro anterior modelo post. Si abrimos el archivo `app/models/comment.rb` veremos lo siguiente:
 
 ```ruby
 #/app/models/comment.rb
@@ -618,7 +618,7 @@ class Comment < ActiveRecord::Base
 end
 ```
 
-En la segunda línea vemos 'belongs_to :post' que especifica la relación que tiene el modelo con la tabla post, es decir que cada comentario pertenece a un post. Ahora deberíamos completar esta relación editando el modelo post que ya teníamos con lo siguiente:
+En la segunda línea vemos `belongs_to :post` que especifica la relación que tiene el modelo con la tabla post, es decir que cada comentario pertenece a un post. Ahora deberíamos completar esta relación editando el modelo post que ya teníamos con lo siguiente:
 
 ```ruby
 #/app/models/post.rb
@@ -629,9 +629,9 @@ class Post < ActiveRecord::Base
 end
 ```
 
-Aquí especificamos la relación con 'has_many :comments', estableciendo que un post, puede tener varios comentarios. Además con 'dependent: :destroy' estamos diciendo que cuando borramos un post, también borramos todos los comentarios asociados a ese post.
+Aquí especificamos la relación con `has_many :comments`, estableciendo que un post, puede tener varios comentarios. Además con `dependent: :destroy` estamos diciendo que cuando borramos un post, también borramos todos los comentarios asociados a ese post.
 
-El comando que hemos ejecutado, nos ha creado una migración que podemos encontrar en la carpeta 'db/migrate'. El archivo lo podemos identificar porque tendrá como nombre un 'timestamp' y el comando que hemos utilizado para crear la migración, por ejemplo '20140814091010_create_comments.rb', el contenido del fichero es el siguiente.
+El comando que hemos ejecutado, nos ha creado una migración que podemos encontrar en la carpeta `db/migrate`. El archivo lo podemos identificar porque tendrá como nombre un `timestamp` y el comando que hemos utilizado para crear la migración, por ejemplo `20140814091010_create_comments.rb`, el contenido del fichero es el siguiente.
 
 ```ruby
 class CreateComments < ActiveRecord::Migration
@@ -656,7 +656,7 @@ $ bin/rake db:migrate
 
 #### Añadiendo nuevas rutas.
 
-Vamos a especificar en nuestra aplicación donde debemos navegar para ver los comentarios necesitamos modificar el archivo 'routes.rb' para que sea como el siguiente:
+Vamos a especificar en nuestra aplicación donde debemos navegar para ver los comentarios necesitamos modificar el archivo `routes.rb` para que sea como el siguiente:
 
 ```ruby
 Rails.application.routes.draw do
@@ -677,7 +677,7 @@ Necesitamos un nuevo controlador que se encargue de la creación, y eliminación
 $ bin/rails generate controller Comments
 ```
 
-Abrimos el archivo que crea el generador 'app/controllers/comments_controller.rb' y añadimos lo siguiente:
+Abrimos el archivo que crea el generador `app/controllers/comments_controller.rb` y añadimos lo siguiente:
 
 ```ruby
 class CommentsController < ApplicationController
@@ -715,7 +715,7 @@ Ahora lo que nos falta es ir modificando las vistas para poder agregar y mostrar
 
 ### Modificando las vistas
 
-Abrimos 'app/views/posts/show.html.erb' y la modificamos para que quede de la siguiente manera.
+Abrimos `app/views/posts/show.html.erb` y la modificamos para que quede de la siguiente manera.
 
 ```ruby
 <div class="show-post">
@@ -740,14 +740,14 @@ Abrimos 'app/views/posts/show.html.erb' y la modificamos para que quede de la si
       <%= render 'comments/form' %>
   </div>
   <div class="show-btns">
-    <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
+    <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-default" ,:type=>'button' %>
     <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
-    <%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button'%>
+    <%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-danger" ,:type=>'button'%>
   </div>
 </div>
 ```
 
-Vemos que necesitamos crear dos nuevas parciales o partials, '@post.comments' y 'comments/form'. Para la primera, añadimos un nuevo fichero en 'app/views/comments' con el nombre '_comment.html.erb' con el siguiente contenido que se encargará de mostrar los comentarios existentes y un botón para poder borrarlos:
+Vemos que necesitamos crear dos nuevas parciales o partials, `@post.comments` y `comments/form`. Para la primera, añadimos un nuevo fichero en `app/views/comments` con el nombre `_comment.html.erb` con el siguiente contenido que se encargará de mostrar los comentarios existentes y un botón para poder borrarlos:
 
 ```ruby
 <p>
@@ -766,7 +766,7 @@ Vemos que necesitamos crear dos nuevas parciales o partials, '@post.comments' y 
 </p>
 ```
 
-La segunda parcial la crearemos añadiendo el archivo '_form.html.erb' que se encargará de mostrar un formulario con el que podremos insertar un nuevo comentario en el post.
+La segunda parcial la crearemos añadiendo el archivo `_form.html.erb` que se encargará de mostrar un formulario con el que podremos insertar un nuevo comentario en el post.
 
 ```ruby
 <%= form_for([@post, @post.comments.build]) do |f| %>
@@ -799,7 +799,7 @@ Lo primero que haremos será añadir la gema devise al archivo Gemfile
 gem 'devise'
 ```
 
-Ahora ejecutamos 'bundle install' para que se apliquen los cambios
+Ahora ejecutamos `bundle install` para que se apliquen los cambios
 
 ```bash
 $ bin/bundle install
@@ -849,7 +849,7 @@ Some setup you must do manually if you haven't yet:
 
 ```
 
-Como vemos el instalador nos da una serie de configuraciones que tenemos que aplicar en la medida de lo posible. En nuestro caso tenemos que añadir la siguientes líneas al archivo 'config/enviroments/development.rb'
+Como vemos el instalador nos da una serie de configuraciones que tenemos que aplicar en la medida de lo posible. En nuestro caso tenemos que añadir la siguientes líneas al archivo `config/enviroments/development.rb`
 
 ```ruby
 # Devise config
@@ -857,9 +857,9 @@ config.app_domain = 'localhost:3000'
 config.action_mailer.default_url_options = { host: config.app_domain }
 ```
 
-Esta línea le dice a 'action mailer' que el host que debe usar es 'localhost' que es la dirección actual de nuestra web. Cuando estemos en producción deberemos añadir esa misma linea de comando al archivo  'config/enviroments/production.rb' pero en vez de usar 'localhost:3000' utilizaremos la dirección de la aplicación.
+Esta línea le dice a 'action mailer' que el host que debe usar es 'localhost' que es la dirección actual de nuestra web. Cuando estemos en producción deberemos añadir esa misma linea de comando al archivo  'config/enviroments/production.rb' pero en vez de usar `localhost:3000` utilizaremos la dirección de la aplicación.
 
-Como indicaba en la instalación vamos a necesitar modificar el archivo 'application.html.erb' y añadiremos ahí las etiquetas '<notice>' y '<alert>' dejando el archivo de la siguiente forma:
+Como indicaba en la instalación vamos a necesitar modificar el archivo 'application.html.erb' y añadiremos ahí las etiquetas `<notice>` y `<alert>` dejando el archivo de la siguiente forma:
 
 ```html
 <!DOCTYPE html>
@@ -931,7 +931,7 @@ Aquí podemos ver todas las vista que crea devise incluídos los mails de confir
 
 Vamos a repasar la configuración de Devise y la migration antes de ejecutarla, en su github llegado este momento nos piden que repasemos el modelo y la migration y es lo que vamos a hacer.
 
-Como vemos en el modelo generado por devise, no tenemos activada por defecto la confiración del email proporcionado por el usuario para darse de alta, así que vamos a cambiar esto para que se le envíe un mail de confirmación con un enlace para confirmar el email. Abrimos 'app/models/user.rb' y añadimos ':confirmable' en devise.
+Como vemos en el modelo generado por devise, no tenemos activada por defecto la confiración del email proporcionado por el usuario para darse de alta, así que vamos a cambiar esto para que se le envíe un mail de confirmación con un enlace para confirmar el email. Abrimos `app/models/user.rb` y añadimos `:confirmable` en devise.
 
 ```ruby
 class User < ActiveRecord::Base
@@ -943,7 +943,7 @@ end
 ```
 
 
-Ahora vamos a la migration generada por 'devise' y la modificamos para que los campos requeridos para confirmar el correo se apliquen en la migración.
+Ahora vamos a la migration generada por `devise` y la modificamos para que los campos requeridos para confirmar el correo se apliquen en la migración.
 
 ```ruby
 class DeviseCreateUsers < ActiveRecord::Migration
@@ -998,7 +998,7 @@ $ bin/rake db:migrate
 
 En estos nuestra aplicación funciona pero no tenemos modificadas nuestras vistas con botones o enlaces para loguear o inscribir nuevos usuarios. Además vamos a requerir que un usuario esté logueado antes de poder crear un nuevo post.
 
-Vamos a empezar con esto último ya que es bastante sencillo. Editamos 'app/controllers/posts_controller.rb' y agregamos un 'before_filter' debajo del que ya teníamos.
+Vamos a empezar con esto último ya que es bastante sencillo. Editamos `app/controllers/posts_controller.rb` y agregamos un `before_filter` debajo del que ya teníamos.
 
 ```ruby
 class PostsController < ApplicationController
@@ -1011,9 +1011,9 @@ end
 
 Si vamos a nuestra aplicación e intentamos crear un nuevo post, nos redirigirá automáticamente a una vista para realizar el login de usuario, de paso especificamos que nos obligue a estar autentificados también para editar, actualizar y eliminar posts.
 
-Evidentemente no podremos hacer login porque nuestro usuario todavía no está creado, pero desde ahí podemos ir a 'sign up' y crear un nuevo usuario, el problema es que todavía no hemos configurado el correo para que se envíe y como hemos especificado antes necesitamos confirmar el correo, vamos a confirmar correctamente el correo antes de continuar.
+Evidentemente no podremos hacer login porque nuestro usuario todavía no está creado, pero desde ahí podemos ir a `sign up` y crear un nuevo usuario, el problema es que todavía no hemos configurado el correo para que se envíe y como hemos especificado antes necesitamos confirmar el correo, vamos a confirmar correctamente el correo antes de continuar.
 
-Para este ejemplo voy a utilizar una cuenta de gmail para enviar el correo, abrimos 'config/environments/development.rb' y añadimos la siguiente configuración:
+Para este ejemplo voy a utilizar una cuenta de gmail para enviar el correo, abrimos `config/environments/development.rb` y añadimos la siguiente configuración:
 
 ```ruby
 Rails.application.configure do
@@ -1038,11 +1038,11 @@ end
 
 ```
 
-Como ya hemos visto anteriormente debemos configurar las variables de entorno 'GMAIL_USER_NAME' y 'GMAIL_PASSWORD' en el archivo 'config/application.yml' para que sean cargadas por figaro.
+Como ya hemos visto anteriormente debemos configurar las variables de entorno `GMAIL_USER_NAME` y `GMAIL_PASSWORD` en el archivo `config/application.yml` para que sean cargadas por figaro.
 
 ###### Añadiendo botones a nuestra vista
 
-Vamos a modificar el archivo 'app/views/layouts/application.html.erb' y lo dejaremos del siguiente modo.
+Vamos a modificar el archivo `app/views/layouts/application.html.erb` y lo dejaremos del siguiente modo.
 
 ```html
 <!DOCTYPE html>
@@ -1070,10 +1070,284 @@ Vamos a modificar el archivo 'app/views/layouts/application.html.erb' y lo dejar
 
 ```
 
-Añadimos los botones de 'Sign in' y 'Sign up' pero sólo si el usuario no está logueado ya en la página. Si está logueado vamos a mostrarle el botón de 'Sign out'. Para ello vamos a comprobar si el usuario está logueado con 'user_signed_in?' proporcionado por devise.
+Añadimos los botones de `Sign in` y `Sign up` pero sólo si el usuario no está logueado ya en la página. Si está logueado vamos a mostrarle el botón de `Sign out`. Para ello vamos a comprobar si el usuario está logueado con `user_signed_in?` proporcionado por devise.
 
-Vamos a hacer lo mismo con el botón "New Post", lo mostraremos sólo cuando el usuario esté logueado, es tan sencillo como añadir un condicional que compruebe si el usuario está logueado o no.
+Vamos a hacer lo mismo con el botón "New Post", lo mostraremos sólo cuando el usuario esté logueado, es tan sencillo como añadir un condicional que compruebe si el usuario está logueado o no. Esta vez para dejar el código más limpio vamos a utilizar un método en un helper. Abrimos `index.html.erb` y lo editamos de la siguiente forma.
 
+```html
+<div class="page-header">
+  <h1>My posts</h1>
+  Created using Ruby on Rails
+  <div class="header-btn">
+  <%= show_newpost_button %>
+  </div>
+</div>
+<p id="notice"><%= notice %></p>
+
+<div id="posts-container">
+  <div class="posts">
+    <%= render @posts %>
+  </div>
+</div>
+
+<div id="infinite-scrolling">
+  <%= paginate @posts %>
+</div>
+```
+
+como se puede apreciar hemos eliminado el código del botón `New Post` y lo hemos sustituido por una llamada a `show_newpost_button`. Ahora abrimos `app/helpers/applicantion_helper.rb` y añadimos el código para que muestre el botón cuando haya un usuario logueado.
+
+```ruby
+module ApplicationHelper
+  def show_newpost_button
+    if user_signed_in?
+      link_to 'New Post',new_post_path, :class=>"btn btn-default" ,:type=>'button'
+    end
+  end
+end
+```
+
+Añadido esto, el botón se mostrará únicamente cuando haya un usuario logueado.
+
+### Relacionando usuarios y posts.
+
+Hasta ahora hemos sido capaces de crear posts una vez hemos estado logueados en la web, pero sin embargo no hemos añadido los usuarios a los posts de forma que queden relacionados y podamos saber que usuario ha publicado cada post. Podremos añadir esta funcionalidad de forma muy sencilla siguiendo estos pasos:
+
+##### Añadiendo una referencia al usuario en la tabla Posts
+
+Vamos a añadir una referencia al autor del mensaje en cada uno de los posts de forma que al crearlo quede almacenado que usuario fué el creador. Lo primero que debemos hacer es crear una migración que añada una columna `user_id` a nuestra tabla posts.
+
+```bash
+$ bin/rails generate migration AddUserRefToPosts user:references
+```
+
+Utilizamos el formato `AddXXXRefToYYY` seguido de la tabla a la que hacemos referencia para crear la migración que tendrá el siguiente formato:
+
+```ruby
+class AddUserRefToPosts < ActiveRecord::Migration
+  def change
+    add_reference :posts, :user, index: true
+  end
+end
+```
+
+Cuando apliquemos la migración con `bin/rake db:migrate` nos creará una nueva columna `user_id` en la tabla Posts.
+
+Vamos a completar la referencia modificando `post.rb` y `user.rb` de forma que quede establecida la relación utilizando `has_many`y `belong_to`. Establecemos que un usuario puede crear multitud de posts y que un post pertenece a un solo usuario.
+
+```ruby
+class User < ActiveRecord::Base
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable and :omniauthable
+  devise :database_authenticatable, :registerable, :confirmable,
+         :recoverable, :rememberable, :trackable, :validatable
+
+ has_many :posts, dependent: :destroy
+end
+```
+
+
+```ruby
+class Post < ActiveRecord::Base
+  mount_uploader :image, PostImageUploader
+  paginates_per 5
+  has_many :comments, dependent: :destroy
+  belongs_to :user,
+
+  def timestamp
+    created_at.strftime('%B %d %Y, %H:%M')
+  end
+end
+```
+
+##### Mostrando el autor del post en las vistas
+Ahora podremos almacenar la identidad del usuario que crea un post pero todavía no hemos modificado nuestro controlador para agregar esta información. Abrimos `posts_controller.rb` y modificaremos el método create para que establezca el campo `user_id`de posts con el id del usuario actual.
+
+```ruby
+class PostsController < ApplicationController
+  ...
+
+  def create
+    @post = Post.new(post_params)
+    @post.user_id = current_user.id
+
+    respond_to do |format|
+      if @post.save
+        format.html { redirect_to @post, notice: 'Post was successfully created.' }
+        format.json { render :show, status: :created, location: @post }
+      else
+        format.html { render :new }
+        format.json { render json: @post.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  ...
+end
+```
+
+Con esta simple modificación al crear un nuevo mensaje nuestra base de datos asociará el id del usuario logueado como `user_id` del post.
+
+Vamos a mostrar al autor del mensaje en nuestra vista utilizando la relación existente entre posts y users.
+
+Abrimos `_post.html.erb` y lo modificamos para que aparezca el email del creador del mensaje.
+
+```ruby
+<div class="post">
+  <div class="post-image-container">
+    <%= image_tag(post.image_url, :class => 'img-responsive') %>
+  </div>
+  <div class="post-title">
+    <%= link_to post.title, post_path(post) %>
+  </div>
+  <div class="post-details-container">
+    <div class="post-timestamp">
+     on <em><%= post.timestamp %></em>
+    </div>
+    <div class="post-user">
+     by <%= post.user.email %>
+    </div>
+  </div>
+  <div class="post-body">
+    <p><%= truncate(strip_tags(post.body), length: 600) %></p>
+  </div>
+</div>
+```
+
+De la misma forma podemos modificar `show.html.erb` para mostrar el email del creador del post.
+
+```html
+<div class="show-post">
+  <p id="notice"><%= notice %></p>
+  <div class="post">
+    <p class="post-title">
+      <%= @post.title %>
+    </p>
+    <div class="my-post">
+      <p class="post-image-container">
+        <%= image_tag(@post.image_url, :class=>'img-responsive') %>
+      </p>
+      <div class="post-details-container">
+         by <%= @post.user.email %> on <%= @post.timestamp  %>
+      </div>
+      <p class="post-body">
+        <%= @post.body %>
+      </p>
+    </div>
+  </div>
+...
+</div>
+```
+
+Como veis una vez establecida la relación podemos acceder al email del usuario a través de `@post.user.email`.
+
+##### Añadiendo el campo 'name' a la tabla users.
+
+Mostrar el email no es una práctica recomendada así que en vez de eso vamos a mostrar su nombre, para ello debemos añadir la columna 'name' a nuestra tabla Users. El procedimiento es sencillo, primero creamos una migración y después la aplicamos.
+
+```bash
+$ bin/rails generate migration AddNameToUsers name:string
+      invoke  active_record
+      create    db/migrate/20140825100328_add_name_to_users.rb
+$ bin/rake db:migrate
+```
+
+Ahora podremos volver a editar los archivos `_post.html.erb` y `show.html.erb` y sustituir respectivamente `post.user.email` por `post.user.name` y `@post.user.email` por `@post.user.name`, quedando finalmente los archivos de esta forma.
+
+```ruby
+<div class="post">
+  <div class="post-image-container">
+    <%= image_tag(post.image_url, :class => 'img-responsive') %>
+  </div>
+  <div class="post-title">
+    <%= link_to post.title, post_path(post) %>
+  </div>
+  <div class="post-details-container">
+    <div class="post-timestamp">
+     on <em><%= post.timestamp %></em>
+    </div>
+    <div class="post-user">
+     by <%= post.user.name %>
+    </div>
+  </div>
+  <div class="post-body">
+    <p><%= truncate(strip_tags(post.body), length: 600) %></p>
+  </div>
+</div>
+```
+
+`show.html.erb`
+
+```html
+<div class="show-post">
+  <p id="notice"><%= notice %></p>
+  <div class="post">
+    <p class="post-title">
+      <%= @post.title %>
+    </p>
+    <div class="my-post">
+      <p class="post-image-container">
+        <%= image_tag(@post.image_url, :class=>'img-responsive') %>
+      </p>
+      <div class="post-details-container">
+         by <%= @post.user.name %> on <%= @post.timestamp  %>
+      </div>
+      <p class="post-body">
+        <%= @post.body %>
+      </p>
+    </div>
+  </div>
+...
+</div>
+```
+
+###### OJO!, si intentamos cargar la aplicación en estos momentos no mostrará ningún nombre de usuario puesto que los usuarios que hemos creado no tienen asignado ningún nombre todavía.
+
+Podemos editar los usuarios existentes a mano y añadir un nombre pero además tendremos que añadir el campo "nombre" al formulario de registro de usuarios y decirle a Devise que el campo `:name` se insertará en el modelo.
+
+Abrimos la vista de registro `app/views/devise/registrations/new.html.erb` y agregamos el campo `:name` al formulario.
+
+```html
+<h2>Sign up</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div><%= f.label :name %><br />
+  <%= f.text_field :name, autofocus: true %></div>
+
+  <div><%= f.label :email %><br />
+  <%= f.email_field :email %></div>
+
+  <div><%= f.label :password %><br />
+    <%= f.password_field :password, autocomplete: "off" %></div>
+
+  <div><%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %></div>
+
+  <div><%= f.submit "Sign up" %></div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+```
+
+Además tenemos que permitir guardar ese campo en nuestro modelo, abrimos el archivo `app/controllers/application_controller.rb` y lo modificamos con un `before_action` para que permita al nuevo campo ser almacenado en la base de datos.
+
+```ruby
+class ApplicationController < ActionController::Base
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up) << :name
+  end
+end
+```
 
 
 ### Referencias

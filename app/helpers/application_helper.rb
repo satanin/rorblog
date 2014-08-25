@@ -17,7 +17,12 @@ module ApplicationHelper
   def post_navigation_buttons
     (link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button') +
     (link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button') +
-    (link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button')
+    if user_is_owner?
+      (link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button')
+    end
   end
 
+  def user_is_owner?
+    @post.user_id == current_user.id
+  end
 end
