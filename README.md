@@ -18,13 +18,13 @@ Esta demo ha sido creada usando las siguientes versiones.
 
 Para la realización de la demo creamos una nueva aplicación de rails ejecutando el siguiente comando en consola.
 
-```console
+```bash
 $ rails new name_of_your_app
 ```
 
 Ahora, para comprobar que todo ha funcionado correctamente podemos hacer lo siguiente.
 
-```console
+```bash
 $ cd name_of_your_app
 $ bin/rails server
 ```
@@ -81,19 +81,19 @@ gem 'bootstrap-sass'
 
 Una vez modificado el archivo gemfile ejecutamos el siguiente comando para incluir las gemas en nuestra app.
 
-```console
+```bash
 $ bin/bundle install
 ```
 
 Vamos a hacer un install de jQuery para que se descarguen los archivos necesarios y configurar nuestra app para usar jQuery.
 
-```console
+```bash
 $ bin/rails generate jquery:install
 ```
 
 Descargamos el plugin de jQuery para hacer infinite scroll y lo meteremos en nuestra app en 'vendor/assets/javascripts/jquery.infinitescroll.js' ejecutando este comando en el terminal.
 
-```console
+```bash
 $ curl -k -o vendor/assets/javascripts/jquery.infinitescroll.js https://raw.githubusercontent.com/paulirish/infinite-scroll/master/jquery.infinitescroll.js
 ```
 
@@ -118,7 +118,7 @@ Vamos a crear un controlador para que sea nuestra página principal y muestre un
 
 Para general el controlador utilizaremos el siguiente comando de rails:
 
-```console
+```bash
 $ bin/rails generate controller posts
 ```
 
@@ -165,7 +165,7 @@ Ahora si guardamos el archivo y volvemos a cargar la página en el navegador (ht
 
 Ejecutamos el siguiente comando en la terminal.
 
-```console
+```bash
     $ bin/rails generate model Post title:string body:string image:string
     $ bin/rake db:migrate
 ```
@@ -247,7 +247,7 @@ Para poder subir imágenes con nuestros posts debemos configurar primero nuestra
 
 Lo primero que vamos a hacer es generar un uploader para nuestras imágenes.
 
-```console
+```bash
     $ bin/rails generate uploader PostImage
 ```
 
@@ -1042,17 +1042,39 @@ Como ya hemos visto anteriormente debemos configurar las variables de entorno 'G
 
 ###### Añadiendo botones a nuestra vista
 
-```ruby
-<nav class="navbar navbar-default" role="navigation">
-<%- if controller_name != 'sessions' %>
-<%= link_to "Sign in", new_user_session_path, :class=>'btn btn-default navbar-btn'%>
-  <%= link_to "Sign up", new_user_registration_path, :class=>'btn btn-default navbar-btn'%>
-<% else %>
-  <%= link_to "Sign out", destroy_user_session_path, method: :delete, :class=>'btn btn-primary navbar-btn' %>
-<% end -%>
-</nav>
+Vamos a modificar el archivo 'app/views/layouts/application.html.erb' y lo dejaremos del siguiente modo.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rorblog</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div class="container">
+  <nav class="navbar navbar-default" role="navigation">
+  <% if !user_signed_in? %>
+  <%= link_to "Sign in", new_user_session_path, :class=>'btn btn-default navbar-btn'%>
+    <%= link_to "Sign up", new_user_registration_path, :class=>'btn btn-default navbar-btn'%>
+  <% else %>
+    <%= link_to "Sign out", destroy_user_session_path, method: :delete, :class=>'btn btn-primary navbar-btn' %>
+  <% end %>
+  </nav>
+  <%= yield %>
+</div>
+</body>
+</html>
 
 ```
+
+Añadimos los botones de 'Sign in' y 'Sign up' pero sólo si el usuario no está logueado ya en la página. Si está logueado vamos a mostrarle el botón de 'Sign out'. Para ello vamos a comprobar si el usuario está logueado con 'user_signed_in?' proporcionado por devise.
+
+Vamos a hacer lo mismo con el botón "New Post", lo mostraremos sólo cuando el usuario esté logueado, es tan sencillo como añadir un condicional que compruebe si el usuario está logueado o no.
+
+
 
 ### Referencias
 Este tutorial ha sido creado gracias a la ayuda de los siguientes sitios:

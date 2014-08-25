@@ -19,9 +19,21 @@ body{
   display:block
 }
 
-.post{
+.post, .post-comments, .post-comments-form{
   background-color:#FFFFFF;
   box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+}
+
+.comments-header{
+  font-size: 30px;
+  line-height: 34px;
+  font-weight: 900;
+  padding-left: 10px;
+  border-bottom: 1px solid #DBDBDB;
+}
+
+.comments-container{
+  display:block;
 }
 
 .post-body{
@@ -32,4 +44,27 @@ body{
 .post-timestamp{
   float:right;
   padding-right: 10px;
+}
+
+.btn{
+  margin-left: 5px;
+}
+
+.show-btns{
+  margin-bottom: 20px;
+}
+
+a{
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+a:visited{
+  color:#2CB1FB;
+  text-decoration: none;
+}
+
+a:hover{
+  color:#2CB1FB;
+  text-decoration: none;
 }

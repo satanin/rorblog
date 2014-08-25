@@ -8,20 +8,27 @@
       <p class="post-image-container">
         <%= image_tag(@post.image_url, :class=>'img-responsive') %>
       </p>
+      <div class="post-details-container">
+        <%= @post.timestamp  %> - <%= @post.user.name %>
+      </div>
       <p class="post-body">
         <%= @post.body %>
       </p>
     </div>
   </div>
   <div class="post-comments">
-    <h2>Comments</h2>
+    <div class="comments-header">
+      Comments
+    </div>
+    <div class="comments-container">
       <%= render @post.comments %>
+    </div>
+  </div>
+  <div class="post-comments-form">
     <h2>Leave your comment:</h2>
       <%= render 'comments/form' %>
   </div>
   <div class="show-btns">
-    <%= link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button' %>
-    <%= link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button' %>
-    <%= link_to 'Delete', post_path(@post), method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-default" ,:type=>'button'%>
+    <%= post_navigation_buttons %>
   </div>
 </div>

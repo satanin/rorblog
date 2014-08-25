@@ -1,3 +1,37 @@
 // Place all the styles related to the Comments controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.comment-autor, .comment-body{
+  display:inline-block;
+  text-align: center;
+  height:100%;
+  vertical-align: middle;
+}
+
+.comment-author{
+  width: 10%;
+}
+
+.comment-body{
+  width: 75%;
+}
+
+.comment-button{
+  display:inline-block;
+  width: 9%;
+  text-align: center;
+  font-weight: 900;
+  color: #2CB1FB;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.commenter-avatar{
+  width: 100px;
+}
+
+.comments-container{
+  height:100%;
+}

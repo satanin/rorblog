@@ -9,12 +9,7 @@
 <body>
 <div class="container">
 <nav class="navbar navbar-default" role="navigation">
-<%- if controller_name != 'sessions' %>
-<%= link_to "Sign in", new_user_session_path, :class=>'btn btn-default navbar-btn'%>
-  <%= link_to "Sign up", new_user_registration_path, :class=>'btn btn-default navbar-btn'%>
-<% else %>
-  <%= link_to "Sign out", destroy_user_session_path, method: :delete, :class=>'btn btn-primary navbar-btn' %>
-<% end -%>
+  <%= user_session_buttons %>
 </nav>
   <%= yield %>
 </div>

@@ -1,14 +1,15 @@
-<p>
-  <strong>Commenter:</strong>
+<div class="comment-autor">
+  <%= image_tag 'default_avatar.png', :class => 'commenter-avatar' %> <br/>
+  <strong>Commenter:</strong><br />
   <%= comment.commenter %>
-</p>
+</div>
 
-<p>
-  <strong>Comment:</strong>
+<div class="comment-body">
+  <strong>Comment:</strong> <br/>
   <%= comment.body %>
-</p>
-<p>
+</div>
+<div class="comment-button">
 <%= link_to 'Destroy Comment', [comment.post, comment],
              method: :delete,
              data: { confirm: 'Are you sure?' } %>
-</p>
+</div>
