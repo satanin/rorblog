@@ -15,6 +15,14 @@ module ApplicationHelper
     end
   end
 
+  def user_details
+    result = (' ')
+    if user_signed_in?
+      result +=('- Hello ' + current_user.name) + (' ') + (image_tag current_user.avatar , :class=>"user-header-avatar")
+    end
+    result
+  end
+
   def post_navigation_buttons
     result = (link_to 'Edit', edit_post_path(@post), :class=>"btn btn-info" ,:type=>'button')
     result += (link_to 'Back', posts_path, :class=>"btn btn-default" ,:type=>'button')
@@ -24,9 +32,6 @@ module ApplicationHelper
     result
   end
 
-  def user_details
-    ('Hello ' + current_user.name) + (' ') + (image_tag current_user.avatar , :class=>"user-header-avatar")
-  end
 
   def owner?
     @post.user_id == current_user.id

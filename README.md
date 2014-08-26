@@ -1332,7 +1332,7 @@ Abrimos la vista de registro `app/views/devise/registrations/new.html.erb` y agr
 
 ```
 
-Además tenemos que permitir guardar ese campo en nuestro modelo, abrimos el archivo `app/controllers/application_controller.rb` y lo modificamos con un `before_action` para que permita al nuevo campo ser almacenado en la base de datos.
+Además tenemos que permitir guardar ese campo en nuestro modelo, abrimos el archivo `app/controllers/application_controller.rb` y lo modificamos con un `before_action` para que permita al nuevo campo ser almacenado en la base de datos tanto al darnos de alta (`sign_up`) como al editar el usuario (`account_update`).
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -1344,11 +1344,131 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) << :name
+    devise_parameter_sanitizer.for(:sign_up) {|u| u.permit(:name,:email,:password,:password_confirmation,:current_password) }
+    :current_password) }
+    devise_parameter_sanitizer.for(:account_update) {|u| u.permit(:name,:email,:password,:password_confirmation,:current_password)}
   end
 end
 ```
 
+### Añadiendo un avatar para los usuarios
+
+Ahora que tenemos puesto el nombre de los usuarios vamos a completar un poco más la aplicación añadiendo un avatar. Para ello utilizaremos lo que hemos visto hasta ahora.
+
+* Creamos un uploader para carrierwave.
+
+```bash
+$ bin/rails generate uploader Avatar
+```
+
+* Configuramos el archivo del uploader para que almacene los avatares en Amazon S3 usando la gema fog.
+
+```ruby
+class AvatarUploader < CarrierWave::Uploader::Base
+
+  # Include RMagick or MiniMagick support:
+  # include CarrierWave::RMagick
+  # include CarrierWave::MiniMagick
+
+  # Choose what kind of storage to use for this uploader:
+  storage :fog
+
+  # Override the directory where uploaded files will be stored.
+  # This is a sensible default for uploaders that are meant to be mounted:
+  def store_dir
+    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+  end
+  # Add a white list of extensions which are allowed to be uploaded.
+  # For images you might use something like this:
+  def extension_white_list
+    %w(jpg jpeg gif png)
+  end
+end
+```
+
+* Creamos una migración en la tabla users
+
+```bash
+$ bin/rails generate migration AddAvatarToUsers avatar:string
+```
+
+* Modificamos los formularios de edición y alta de usuarios para que nos muestre el avatar añadiendo este campo en el formulario.
+
+```html
+  <div><%= f.label :avatar %><br />
+  <%= f.file_field :avatar %></div>
+```
+
+* Modificamos `application_controller.rb` para que permita guardar el nuevo campo en la base de datos.
+
+```ruby
+class ApplicationController < ActionController::Base
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up) {|u| u.permit(:name,:email,:password,:password_confirmation,:current_password,:avatar) }
+    :current_password) }
+    devise_parameter_sanitizer.for(:account_update) {|u| u.permit(:name,:email,:password,:password_confirmation,:current_password,:avatar)}
+  end
+end
+```
+
+##### Procesando la imagen
+Si queremos procesar el tamaño de la imagen al subirla podemos utilizar la gema minimagick que nos permitirá entre otras cosas cambiar el tamaño de la imagen. 
+Para poder utilizar minimagick necesitamos tener instalado imagemagick en nuestro sistema, para instalarlo en sistemas Linux con apt-get sería tan sencillo como:
+
+```bash
+$ sudo apt-get install imagemagick
+```
+
+Una vez instalado imagemagick editamos `Gemfile` y añadimos `gem 'mini_magick'` siempre debajo de la gema `carrierwave`.
+
+```ruby
+...
+gem 'carrierwave'
+gem 'mini_magick'
+...
+```
+
+Como siempre, al modificar el archivo `Gemfile` hacemos un bundle install
+
+```bash
+$ bin/bundle install
+```
+
+Y para terminar modificamos el uploader de forma que procese las imágenes al subirlas.
+
+```ruby
+class AvatarUploader < CarrierWave::Uploader::Base
+
+  # Include RMagick or MiniMagick support:
+  # include CarrierWave::RMagick
+  include CarrierWave::MiniMagick
+
+  # Choose what kind of storage to use for this uploader:
+  storage :fog
+
+  # Override the directory where uploaded files will be stored.
+  # This is a sensible default for uploaders that are meant to be mounted:
+  def store_dir
+    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+  end
+
+  # Process files as they are uploaded:
+  process :resize_to_fit => [120, 120]
+
+  # Add a white list of extensions which are allowed to be uploaded.
+  # For images you might use something like this:
+  def extension_white_list
+    %w(jpg jpeg gif png)
+  end
+end
+```
 
 
 ### Referencias
