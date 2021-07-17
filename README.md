@@ -41,7 +41,7 @@ Lo primero que vamos a hacer es instalar la gema figaro que nos ayudará a mante
 Añadimos la gema al archivo Gemfile:
 
 ```ruby
-gem 'figaro'
+gem install 'figaro'
 ```
 
 Ejecutamos en consola
